@@ -1,23 +1,40 @@
 import React from "react";
 import "./App.css";
 import { useState, useEffect } from "react";
-const remainTime = 5;
+import ReactLoading from "react-loading";
+
+const remainTime = 30;
+const isProduction = process.env.NODE_ENV === "production";
+
 function App() {
   const [rows, setRows] = useState([]);
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [countDown, setCountDown] = useState(true);
   const [countdownPaused, setCountdownPaused] = useState(false);
 
   // Fetch data when component mounts
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(
-        "https://docs.google.com/spreadsheets/d/1of1pkodGvVWOJE8vHDw7naNt8xvmPwyE284fJ7P4kRk/export?format=csv"
-      );
-      const data = await response.text();
-      const rows = data.split("\n").map((row) => row.split(","));
-      setRows(rows);
+      let data;
+      if (isProduction) {
+        console.log("production");
+        const response = await fetch(
+          "https://docs.google.com/spreadsheets/d/1of1pkodGvVWOJE8vHDw7naNt8xvmPwyE284fJ7P4kRk/export?format=csv"
+        );
+        data = await response.text();
+        const rows = data.split("\n").map((row) => row.split(","));
+        setRows(rows);
+        setLoading(false);
+      } else {
+        // Fetch data from local JSON file in development mode
+        const response = await fetch("data.json");
+        data = await response.json(); // Parse JSON response
+        const rows = Array.isArray(data) ? data : [];
+        setRows(rows);
+        setLoading(false);
+      }
     }
 
     fetchData();
@@ -27,15 +44,22 @@ function App() {
   function handleClick(rowIndex) {
     setClickedRowIndex(rowIndex);
     setRemainingTime(remainTime);
-    setLoading(true);
+    setCountDown(true);
   }
 
   // Function to handle rendering the link or button
   const renderLinkOrButton = (cellData, rowIndex) => {
-    if (loading && remainingTime !== null && clickedRowIndex === rowIndex) {
+    if (
+      countDown &&
+      remainingTime !== null &&
+      remainingTime !== 0 &&
+      clickedRowIndex === rowIndex
+    ) {
       return (
-        <span>
-          <span className="loading">🔎</span>
+        <span className="count-down">
+          <span>
+            <ReactLoading type="bubbles" color="blue" />
+          </span>
           <span className="number gradient-text">{remainingTime}</span>
         </span>
       );
@@ -50,8 +74,9 @@ function App() {
     } else {
       return (
         <>
-          <button onClick={() => handleClick(rowIndex)}>open</button>
-          <span className="safe">✔️</span>
+          <button className="open-link" onClick={() => handleClick(rowIndex)}>
+            👁️🔗 GET LINK
+          </button>
         </>
       );
     }
@@ -99,24 +124,38 @@ function App() {
 
   return (
     <>
-      <h2 className="table-header">TABLE HEADER</h2>
-      <ul className="responsive-table">
-        {rows.map((rowData, rowIndex) => (
-          <li key={rowIndex} className="table-row">
-            {rowData.map((cellData, cellIndex) => (
-              <div
-                key={cellIndex}
-                className="col"
-                id={`tableline${rowIndex}-${cellIndex}`}
-              >
-                {cellIndex === 1
-                  ? renderLinkOrButton(cellData, rowIndex)
-                  : cellData}
-              </div>
-            ))}
-          </li>
-        ))}
-      </ul>
+      <h2 className="table-header">HAVE A NICE TIME</h2>
+      {loading ? (
+        <div className="loading-icon">
+          <ReactLoading type="bars" color="#000" />
+        </div>
+      ) : (
+        <ul className="responsive-table">
+          {rows.map((rowData, rowIndex) => (
+            <li key={rowIndex} className="table-row">
+              {rowData.map((cellData, cellIndex) => (
+                <div
+                  key={cellIndex}
+                  className="col"
+                  id={`tableline${rowIndex}-${cellIndex}`}
+                >
+                  {cellIndex === 0 ? (
+                    <img
+                      className="image-id"
+                      src={cellData}
+                      alt={`Image ${rowIndex}-${cellIndex}`}
+                    />
+                  ) : cellIndex === 1 ? (
+                    renderLinkOrButton(cellData, rowIndex)
+                  ) : (
+                    cellData
+                  )}
+                </div>
+              ))}
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }

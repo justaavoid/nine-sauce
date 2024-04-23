@@ -1,7 +1,8 @@
 * {
   margin: 0;
   padding: 5px;
-  font-family: sans-serif;
+  font-family: "Indie Flower", cursive;
+  /* background-color: rgba(255, 228, 196, 0.55); */
 }
 body {
   max-width: 500px;
@@ -17,15 +18,15 @@ body {
   list-style: none;
   li {
     border-radius: 3px;
-    padding: 10px 20px;
-    margin-bottom: 15px;
+    padding: 10px 10px;
+    margin-bottom: 25px;
 
     /* display: flex; */
   }
 
   .table-row {
-    background-color: #ffffff;
-    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
   }
   .col:nth-child(odd) {
     color: rgb(0, 55, 158);
@@ -58,11 +59,12 @@ body {
 
 /* CSS for button */
 button {
+  font-family: "Indie Flower", cursive !important;
   --b: 3px; /* border thickness */
   --s: 0.15em; /* size of the corner */
-  --c: #bd5532;
+  --c: blue;
 
-  padding: calc(0.05em + var(--s)) calc(0.3em + var(--s));
+  padding: calc(0.5em + var(--s)) calc(0.3em + var(--s));
   color: var(--c);
   --_p: var(--s);
   background: conic-gradient(
@@ -111,25 +113,16 @@ button {
   color: transparent;
 
   /* Apply the background gradient */
-  background: linear-gradient(to right, red, blue, yellow);
+  background: linear-gradient(to right, black, white);
 
   /* Use background-clip to apply the gradient only to the text */
   -webkit-background-clip: text;
   background-clip: text;
 }
 .table-header {
-  /* position: fixed; */
-  /* left: 50%; */
-  /* transform: translate(-50%, -50%); */
+  color: transparent;
   text-align: center;
-  /* Set the text color to transparent */
-  color: linear-gradient(to right, blue, green);
-
-  /* Apply the background gradient */
-  /* background: linear-gradient(to right, blue, green); */
-  /* background-color: darkolivegreen; */
-
-  /* Use background-clip to apply the gradient only to the text */
+  background: linear-gradient(to right, black, red, pink, blue, green, white);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -160,4 +153,29 @@ button {
     mask: var(--corner) subtract, var(--inner);
     content: "";
   }
+}
+.loading-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Adjust as needed */
+}
+.count-down {
+  background-color: rgba(255, 228, 196, 0.55);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.open-link {
+  width: 100%;
+}
+
+.image-id {
+  width: 100%;
+  /* height: 100px; */
+  display: block;
+  margin: 0 auto;
 }
