@@ -1,0 +1,163 @@
+* {
+  margin: 0;
+  padding: 5px;
+  font-family: sans-serif;
+}
+body {
+  max-width: 500px;
+  margin: auto;
+}
+.cover {
+  border: #6c7a89 1px solid;
+}
+
+.responsive-table {
+  margin-top: 40px;
+  width: 100%;
+  list-style: none;
+  li {
+    border-radius: 3px;
+    padding: 10px 20px;
+    margin-bottom: 15px;
+
+    /* display: flex; */
+  }
+
+  .table-row {
+    background-color: #ffffff;
+    box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+  }
+  .col:nth-child(odd) {
+    color: rgb(0, 55, 158);
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    border-bottom: 1px solid lightgray;
+  }
+
+  @media all and (max-width: 767px) {
+    li {
+      display: flex;
+      flex-direction: column;
+    }
+    .col {
+      text-align: left;
+      flex-basis: 100%;
+    }
+    .col {
+      display: flex;
+      padding: 10px 0;
+      &:before {
+        color: #6c7a89;
+        content: attr(data-label);
+        text-align: left;
+      }
+    }
+  }
+}
+
+/* CSS for button */
+button {
+  --b: 3px; /* border thickness */
+  --s: 0.15em; /* size of the corner */
+  --c: #bd5532;
+
+  padding: calc(0.05em + var(--s)) calc(0.3em + var(--s));
+  color: var(--c);
+  --_p: var(--s);
+  background: conic-gradient(
+      from 90deg at var(--b) var(--b),
+      #0000 90deg,
+      var(--c) 0
+    )
+    var(--_p) var(--_p) / calc(100% - var(--b) - 2 * var(--_p))
+    calc(100% - var(--b) - 2 * var(--_p));
+  transition: 0.3s linear, color 0s, background-color 0s;
+  outline: var(--b) solid #0000;
+  outline-offset: 0.2em;
+}
+button:hover,
+button:focus-visible {
+  --_p: 0px;
+  outline-color: var(--c);
+  outline-offset: 0.05em;
+}
+button:active {
+  background: var(--c);
+  color: #fff;
+}
+
+button {
+  width: 200px;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 22px;
+  cursor: pointer;
+  border: none;
+}
+.loading {
+  font-size: 35px;
+}
+.safe {
+  font-size: 25px;
+}
+.number {
+  color: darkgreen;
+  font-size: 35px;
+  font-weight: bold;
+}
+.gradient-text {
+  /* Set the text color to transparent */
+  color: transparent;
+
+  /* Apply the background gradient */
+  background: linear-gradient(to right, red, blue, yellow);
+
+  /* Use background-clip to apply the gradient only to the text */
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.table-header {
+  /* position: fixed; */
+  /* left: 50%; */
+  /* transform: translate(-50%, -50%); */
+  text-align: center;
+  /* Set the text color to transparent */
+  color: linear-gradient(to right, blue, green);
+
+  /* Apply the background gradient */
+  /* background: linear-gradient(to right, blue, green); */
+  /* background-color: darkolivegreen; */
+
+  /* Use background-clip to apply the gradient only to the text */
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.styled-border {
+  --b: 0.5em; /* border width */
+  --c: 3em; /* corner size */
+  --r: 2em; /* corner rounding */
+  position: relative;
+  margin: 1em auto;
+  border: solid var(--b) transparent;
+  padding: 1em;
+  max-width: 23em;
+  font: 1.25em ubuntu, sans-serif;
+
+  &::before {
+    position: absolute;
+    z-index: -1;
+    inset: calc(-1 * var(--b));
+    border: inherit;
+    border-radius: var(--r);
+    background: linear-gradient(orange, deeppink, purple) border-box;
+    --corner: conic-gradient(from -90deg at var(--c) var(--c), red 25%, #0000 0)
+      0 0 / calc(100% - var(--c)) calc(100% - var(--c)) border-box;
+    --inner: conic-gradient(red 0 0) padding-box;
+    -webkit-mask: var(--corner), var(--inner);
+    /* -webkit-mask-composite: source-out; */
+    mask: var(--corner) subtract, var(--inner);
+    content: "";
+  }
+}
