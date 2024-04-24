@@ -57,8 +57,8 @@ body {
   }
 }
 
-/* CSS for button */
-button {
+/* CSS for show link button */
+.show-button {
   font-family: "Indie Flower", cursive !important;
   --b: 3px; /* border thickness */
   --s: 0.15em; /* size of the corner */
@@ -78,25 +78,26 @@ button {
   outline: var(--b) solid #0000;
   outline-offset: 0.2em;
 }
-button:hover,
-button:focus-visible {
+.show-button:hover,
+.show-button:focus-visible {
   --_p: 0px;
   outline-color: var(--c);
   outline-offset: 0.05em;
 }
-button:active {
+.show-button:active {
   background: var(--c);
   color: #fff;
 }
 
-button {
-  width: 200px;
+.show-button {
+  width: 100%;
   font-family: sans-serif;
   font-weight: bold;
   font-size: 22px;
   cursor: pointer;
   border: none;
 }
+
 .loading {
   font-size: 35px;
 }
@@ -104,6 +105,10 @@ button {
   font-size: 25px;
 }
 .number {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: darkgreen;
   font-size: 35px;
   font-weight: bold;
@@ -113,7 +118,7 @@ button {
   color: transparent;
 
   /* Apply the background gradient */
-  background: linear-gradient(to right, black, white);
+  background: linear-gradient(to right, blue, lightblue);
 
   /* Use background-clip to apply the gradient only to the text */
   -webkit-background-clip: text;
@@ -161,16 +166,17 @@ button {
   height: 100%; /* Adjust as needed */
 }
 .count-down {
-  background-color: rgba(255, 228, 196, 0.55);
+  position: relative;
+  /* background-color: rgba(255, 228, 196, 0.55); */
   display: flex;
-  flex-direction: row;
+  /* flex-direction: row; */
   justify-content: center;
   align-items: center;
   width: 100%;
 }
 
-.open-link {
-  width: 100%;
+.loading-container {
+  position: relative;
 }
 
 .image-id {
@@ -178,4 +184,41 @@ button {
   /* height: 100px; */
   display: block;
   margin: 0 auto;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.image-id.blurred {
+  filter: blur(20px); /* Adjust the blur strength as needed */
+}
+
+.blur-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.blur-layer p {
+  color: red;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.blur-layer .reveal-button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #ffffff;
+  /* border: 1px solid #000000; */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }

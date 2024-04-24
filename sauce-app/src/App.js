@@ -1,44 +1,22 @@
 import React from "react";
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactLoading from "react-loading";
-
-const remainTime = 30;
-const isProduction = process.env.NODE_ENV === "production";
+import DataFetching from "./FetchData/fetch-data";
+import LinkOrButton from "./LinkButton/LinkOrButton";
+import ImageContainer from "./ImageContainer/ImageContainer";
 
 function App() {
+  const remainTime = 3;
   const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const isProduction = process.env.NODE_ENV === "production";
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [countDown, setCountDown] = useState(true);
   const [countdownPaused, setCountdownPaused] = useState(false);
-
-  // Fetch data when component mounts
-  useEffect(() => {
-    async function fetchData() {
-      let data;
-      if (isProduction) {
-        console.log("production");
-        const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/1of1pkodGvVWOJE8vHDw7naNt8xvmPwyE284fJ7P4kRk/export?format=csv"
-        );
-        data = await response.text();
-        const rows = data.split("\n").map((row) => row.split(","));
-        setRows(rows);
-        setLoading(false);
-      } else {
-        // Fetch data from local JSON file in development mode
-        const response = await fetch("data.json");
-        data = await response.json(); // Parse JSON response
-        const rows = Array.isArray(data) ? data : [];
-        setRows(rows);
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
+  // State to track which images are revealed
+  const [revealedImages, setRevealedImages] = useState([]);
 
   // Function to handle click on link cell
   function handleClick(rowIndex) {
@@ -46,41 +24,6 @@ function App() {
     setRemainingTime(remainTime);
     setCountDown(true);
   }
-
-  // Function to handle rendering the link or button
-  const renderLinkOrButton = (cellData, rowIndex) => {
-    if (
-      countDown &&
-      remainingTime !== null &&
-      remainingTime !== 0 &&
-      clickedRowIndex === rowIndex
-    ) {
-      return (
-        <span className="count-down">
-          <span>
-            <ReactLoading type="bubbles" color="blue" />
-          </span>
-          <span className="number gradient-text">{remainingTime}</span>
-        </span>
-      );
-    } else if (clickedRowIndex === rowIndex && remainingTime === 0) {
-      return (
-        <div>
-          <a href={cellData} target="_blank" rel="noopener noreferrer">
-            {cellData}
-          </a>
-        </div>
-      );
-    } else {
-      return (
-        <>
-          <button className="open-link" onClick={() => handleClick(rowIndex)}>
-            👁️🔗 GET LINK
-          </button>
-        </>
-      );
-    }
-  };
 
   // Function to handle countdown
   useEffect(() => {
@@ -109,6 +52,15 @@ function App() {
     }
   };
 
+  // Function to handle revealing an image
+  const revealImage = (rowIndex) => {
+    // Check if image at rowIndex is already revealed
+    if (!revealedImages.includes(rowIndex)) {
+      // Add the rowIndex to revealedImages state
+      setRevealedImages([...revealedImages, rowIndex]);
+    }
+  };
+
   useEffect(() => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => {
@@ -124,6 +76,11 @@ function App() {
 
   return (
     <>
+      <DataFetching
+        isProduction={isProduction}
+        setRows={setRows}
+        setLoading={setLoading}
+      />
       <h2 className="table-header">HAVE A NICE TIME</h2>
       {loading ? (
         <div className="loading-icon">
@@ -140,13 +97,21 @@ function App() {
                   id={`tableline${rowIndex}-${cellIndex}`}
                 >
                   {cellIndex === 0 ? (
-                    <img
-                      className="image-id"
-                      src={cellData}
-                      alt={`Image ${rowIndex}-${cellIndex}`}
+                    <ImageContainer
+                      cellData={cellData}
+                      revealedImages={revealedImages}
+                      rowIndex={rowIndex}
+                      revealImage={revealImage}
                     />
                   ) : cellIndex === 1 ? (
-                    renderLinkOrButton(cellData, rowIndex)
+                    <LinkOrButton
+                      cellData={cellData}
+                      rowIndex={rowIndex}
+                      handleClick={handleClick}
+                      countDown={countDown}
+                      remainingTime={remainingTime}
+                      clickedRowIndex={clickedRowIndex}
+                    />
                   ) : (
                     cellData
                   )}
