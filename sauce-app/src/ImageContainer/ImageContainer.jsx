@@ -1,5 +1,6 @@
 // ImageContainer.jsx
 import React from 'react';
+import './BlurLayer.css';
 import BlurLayerButton from './BlurLayerButton';
 
 const ImageContainer = ({ cellData, revealedImages, rowIndex, revealImage }) => {
