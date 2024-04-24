@@ -7,7 +7,7 @@ import LinkOrButton from "./LinkButton/LinkOrButton";
 import ImageContainer from "./ImageContainer/ImageContainer";
 
 function App() {
-  const remainTime = 3;
+  const [remainTime, setRemainTime] = useState(30);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const isProduction = process.env.NODE_ENV === "production";
@@ -24,6 +24,13 @@ function App() {
     setRemainingTime(remainTime);
     setCountDown(true);
   }
+
+  // Function to update remainTime
+  const updateRemainTime = (newItem) => {
+    if (!isNaN(newItem)) {
+      setRemainTime(newItem);
+    }
+  };
 
   // Function to handle countdown
   useEffect(() => {
@@ -80,6 +87,7 @@ function App() {
         isProduction={isProduction}
         setRows={setRows}
         setLoading={setLoading}
+        updateRemainTime={updateRemainTime}
       />
       <h2 className="table-header">HAVE A NICE TIME</h2>
       {loading ? (

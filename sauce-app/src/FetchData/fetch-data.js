@@ -1,6 +1,11 @@
 import { useEffect } from "react";
 
-const DataFetching = ({ isProduction, setRows, setLoading }) => {
+const DataFetching = ({
+  isProduction,
+  setRows,
+  setLoading,
+  updateRemainTime,
+}) => {
   useEffect(() => {
     async function fetchData() {
       let data;
@@ -11,6 +16,15 @@ const DataFetching = ({ isProduction, setRows, setLoading }) => {
         );
         data = await response.text();
         const rows = data.split("\n").map((row) => row.split(","));
+        // Extract and parse the new item from the data
+        const remainTime = parseInt(rows[0][2]); // Assuming the new item is in the first row and third column
+        if (!isNaN(remainTime)) {
+          updateRemainTime(remainTime);
+        }
+        // Clear the content of rows[0][2]
+        if (rows.length > 0 && rows[0].length > 2) {
+          rows[0][2] = "";
+        }
         setRows(rows);
         setLoading(false);
       } else {
@@ -19,6 +33,17 @@ const DataFetching = ({ isProduction, setRows, setLoading }) => {
         const response = await fetch("data.json");
         data = await response.json(); // Parse JSON response
         const rows = Array.isArray(data) ? data : [];
+
+        // Clear the content of rows[i][2] for each row
+        if (rows[0].length > 2) {
+          console.log("has time");
+          const remainTime = parseInt(rows[0][2]); // Assuming the new item is in the first row and third column
+          if (!isNaN(remainTime)) {
+            updateRemainTime(remainTime);
+          }
+          rows[0][2] = "";
+        }
+
         setRows(rows);
         setLoading(false);
       }
