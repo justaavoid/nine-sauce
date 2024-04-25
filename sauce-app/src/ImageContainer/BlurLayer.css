@@ -35,9 +35,67 @@
 
 .image-container {
   position: relative;
-  display: inline-block;
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center horizontally */
+  align-items: center;
+  flex-direction: column;
 }
 
 .image-id.blurred {
-  filter: blur(20px); /* Adjust the blur strength as needed */
+  filter: blur(10px); /* Adjust the blur strength as needed */
+}
+
+.code-update-time {
+  color: black;
+}
+.sensitive-content {
+  color: red;
+}
+.close {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid red;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.confirm-button {
+  color: white;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: green;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  color: white;
+  font-size: 20px;
+  margin-top: 10px;
+  padding: 5px 20px;
+  background-color: red;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.confirm-group {
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+.warning-content {
+  color: black;
+  text-transform: none;
 }

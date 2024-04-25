@@ -7,7 +7,7 @@ import LinkOrButton from "./LinkButton/LinkOrButton";
 import ImageContainer from "./ImageContainer/ImageContainer";
 
 function App() {
-  const [remainTime, setRemainTime] = useState(30);
+  const [remainTime, setRemainTime] = useState(0);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const isProduction = process.env.NODE_ENV === "production";
@@ -104,14 +104,16 @@ function App() {
                   className="col"
                   id={`tableline${rowIndex}-${cellIndex}`}
                 >
-                  {cellIndex === 0 ? (
+                  {cellIndex === 0 && (
                     <ImageContainer
                       cellData={cellData}
                       revealedImages={revealedImages}
                       rowIndex={rowIndex}
                       revealImage={revealImage}
+                      codetimeData={rowData[2]}
                     />
-                  ) : cellIndex === 1 ? (
+                  )}
+                  {cellIndex === 1 && (
                     <LinkOrButton
                       cellData={cellData}
                       rowIndex={rowIndex}
@@ -120,8 +122,6 @@ function App() {
                       remainingTime={remainingTime}
                       clickedRowIndex={clickedRowIndex}
                     />
-                  ) : (
-                    cellData
                   )}
                 </div>
               ))}
