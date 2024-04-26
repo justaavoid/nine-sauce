@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
-from moviepy.editor import VideoFileClip, clips_array, ImageClip
+from flask import Flask, render_template, request, redirect, url_for # type: ignore
+from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
 import os
 
 app = Flask(__name__)
@@ -20,9 +20,14 @@ def process():
         picture = request.files['picture']
         video = request.files['video']
         
-        # Save the uploaded video file to a temporary location
+        # Save the uploaded files to a temporary location
+        picture_path = 'uploads/' + picture.filename
         video_path = 'uploads/' + video.filename
+        picture.save(picture_path)
         video.save(video_path)
+
+        # Create a video clip from the picture
+        image_clip = ImageClip(picture_path, duration=5)  # Adjust duration as needed
         
         # Load the input video
         input_clip = VideoFileClip(video_path)
@@ -40,7 +45,7 @@ def process():
             end_time = (i + 1) * part_duration
             part_clip = input_clip.subclip(start_time, end_time)
             if i == 4:
-                part_clips.append(None)
+                part_clips.append(image_clip)
             part_clips.append(part_clip)
 
         # Reshape the list of clips to form a square pattern
