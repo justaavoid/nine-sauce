@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for # type: ignore
+from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory # type: ignore
 from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
 import os
 
@@ -95,10 +95,15 @@ def process():
         
         # Redirect the user to download the generated video
         return redirect(url_for('download', filename=output_path))
-
+    
 @app.route('/download/<filename>')
 def download(filename):
     return render_template('download.html', filename=filename)
+
+# Add a new route for downloading the video file directly
+@app.route('/download-video/<filename>')
+def download_video(filename):
+    return send_file(filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True)
