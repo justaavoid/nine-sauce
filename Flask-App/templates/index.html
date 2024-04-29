@@ -3,28 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upload Files</title>
+    <title>Home</title>
   </head>
   <body>
-    <h1>Upload Files</h1>
-    <form action="/process" method="post" enctype="multipart/form-data">
-      <label for="picture">Upload Picture:</label>
-      <input
-        type="file"
-        id="picture"
-        name="picture"
-        accept="image/*"
-        required
-      /><br /><br />
-      <label for="video">Upload Video:</label>
-      <input
-        type="file"
-        id="video"
-        name="video"
-        accept="video/*"
-        required
-      /><br /><br />
-      <button type="submit">Upload and Process</button>
-    </form>
+    <h1>Welcome to the Home Page</h1>
+    <p>Please choose an option:</p>
+    <ul>
+      <li><a href="/video">Process Video</a></li>
+      <li><a href="/image">Process Image</a></li>
+    </ul>
   </body>
 </html>

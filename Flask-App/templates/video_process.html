@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Process</title>
+  </head>
+  <body>
+    <h1>Video Processing Page</h1>
+    <form action="/process" method="post" enctype="multipart/form-data">
+      <label for="video">Select Video File:</label>
+      <input type="file" id="video" name="video" accept="video/*" />
+      <br /><br />
+      <label for="picture">Select Picture File:</label>
+      <input type="file" id="picture" name="picture" accept="image/*" />
+      <br /><br />
+      <button type="submit">Process Video</button>
+    </form>
+  </body>
+</html>

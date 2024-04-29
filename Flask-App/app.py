@@ -1,109 +1,105 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file, send_from_directory # type: ignore
-from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
+from flask import Flask, render_template, request, send_file, redirect, url_for
+from video_process import process_video
+from image_process import process_images
 import os
+import shutil
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+UPLOAD_FOLDER = "uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-@app.route('/')
+OUTPUT_FOLDER = "output"
+app.config["OUTPUT_FOLDER"] = OUTPUT_FOLDER
+
+if not os.path.exists(OUTPUT_FOLDER):
+    os.makedirs(OUTPUT_FOLDER)
+
+if os.environ.get("FLASK_ENV") == "development":
+    DEBUG_MODE = True
+else:
+    DEBUG_MODE = False
+# Không cần thiết lúc chạy ở chế độ production
+if DEBUG_MODE:
+    app.debug = True
+
+
+def delFile():
+    # Xóa toàn bộ nội dung trong thư mục uploads
+    for file_name in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, file_name)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print("Failed to delete", file_path, ":", e)
+
+    # Xóa toàn bộ nội dung trong thư mục output
+    for file_name in os.listdir(OUTPUT_FOLDER):
+        file_path = os.path.join(OUTPUT_FOLDER, file_name)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print("Failed to delete", file_path, ":", e)
+
+
+@app.route("/")
 def index():
-    return render_template('index.html')
+    delFile()
+    return render_template("index.html")
 
-@app.route('/process', methods=['POST'])
-def process():
-    if request.method == 'POST':
-        picture = request.files['picture']
-        video = request.files['video']
-        
-        # Save the uploaded files to a temporary location
-        picture_path = 'uploads/' + picture.filename
-        video_path = 'uploads/' + video.filename
-        picture.save(picture_path)
-        video.save(video_path)
 
-        # Create a video clip from the picture
-        image_clip = ImageClip(picture_path, duration=5)  # Adjust duration as needed
-        
-        # Load the input video
-        input_clip = VideoFileClip(video_path)
-        
-        # Calculate the duration of each part
-        num_parts = 8
-        part_duration = input_clip.duration / num_parts
-        
-        # List to store the extracted video clips
-        part_clips = []
+@app.route("/video")
+def video():
+    return render_template("video_process.html")
 
-        # Extract each part of the video
-        for i in range(num_parts):
-            start_time = i * part_duration
-            end_time = (i + 1) * part_duration
-            part_clip = input_clip.subclip(start_time, end_time)
-            if i == 4:
-                part_clips.append(image_clip)
-            part_clips.append(part_clip)
 
-        # Reshape the list of clips to form a square pattern
-        rows = 3
-        cols = 3
+@app.route("/image")
+def image():
+    return render_template("image_process.html")
 
-        # Pad the list with None if the number of clips is less than rows * cols
-        while len(part_clips) < rows * cols:
-            part_clips.append(None)
 
-        # Replace None values with an ImageClip
-        # Get the path to the uploaded image file
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], picture.filename)
-        print("Image path:", image_path)  # Print the image path for debugging
+@app.route("/process-video", methods=["POST"])
+def process_video_route():
+    return process_video(request)
 
-        empty_duration = part_duration
-        image_clip = ImageClip(image_path, duration=empty_duration)
 
-        # Calculate the dimensions of the empty space
-        empty_width = image_clip.size[0] * cols
-        empty_height = image_clip.size[1] * rows
+@app.route("/process-image", methods=["POST"])
+def process_image_route():
+    # Lấy các file ảnh từ request
+    image_files = request.files.getlist("picture")
+    # Lấy link từ input text
+    link = request.form.get("image_link")
+    # Thư mục đầu ra
+    output_dir = OUTPUT_FOLDER
+    # Gọi hàm xử lý ảnh
+    output_path = process_images(image_files, link, output_dir)
+    # Chuyển hướng đến trang download
+    return redirect(url_for("download", filename=output_path))
 
-        # Calculate the position of the image clip in the empty space
-        x_offset = (empty_width - image_clip.w) // 2
-        y_offset = (empty_height - image_clip.h) // 2
 
-        # Place the image in the middle of the empty space
-        image_position = (x_offset, y_offset)
-        image_clip = image_clip.set_position(image_position)
-
-        # Replace None values with the image clip in the list of clips
-        for i in range(len(part_clips)):
-            if part_clips[i] is None:
-                part_clips[i] = image_clip
-
-        # Create a single video where each part appears in its own designated space
-        final_clip = clips_array([[part_clips.pop(0) for _ in range(cols)] for _ in range(rows)])
-
-        # Replace 'output_path' with the desired path for the output video
-        output_path = 'output-merge.mp4'
-
-        # Write the final video clip to a file
-        final_clip.write_videofile(output_path, fps=input_clip.fps)
-        
-        # Remove the temporary files
-        os.remove(video_path)
-        
-        # Redirect the user to download the generated video
-        return redirect(url_for('download', filename=output_path))
-    
-@app.route('/download/<filename>')
+@app.route("/download/<filename>")
 def download(filename):
-    return render_template('download.html', filename=filename)
+    return render_template("download.html", filename=filename)
 
-# Add a new route for downloading the video file directly
-@app.route('/download-video/<filename>')
-def download_video(filename):
-    return send_file(filename, as_attachment=True)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Add a new route for downloading the video or image file directly
+@app.route("/download-file/<filename>")
+def download_file(filename):
+    try:
+        return send_file(filename, as_attachment=True)
+    except Exception as e:
+        # Xử lý ngoại lệ nếu có
+        print("An error occurred:", e)
+
+
+if __name__ == "__main__":
+    # Chỉ cần chạy ở chế độ debug nếu ở môi trường development
+    if DEBUG_MODE:
+        app.run(debug=True)
+    else:
+        app.run(host="0.0.0.0", port=8080)
