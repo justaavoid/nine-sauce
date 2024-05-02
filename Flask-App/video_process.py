@@ -2,13 +2,15 @@ from flask import redirect, url_for
 from moviepy.editor import VideoFileClip
 import os
 
+UPLOAD_FOLDER = "uploads"
+
 
 def process_video(request):
     if request.method == "POST":
         video = request.files["video"]
 
         # Save the uploaded video file to a temporary location
-        video_path = os.path.join(app.config["UPLOAD_FOLDER"], video.filename)
+        video_path = os.path.join(UPLOAD_FOLDER, video.filename)
         video.save(video_path)
 
         # Processing logic for video

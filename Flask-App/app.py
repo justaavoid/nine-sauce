@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, send_file, redirect, url_for
 from video_process import process_video
 from image_process import process_images
 import os
-import shutil
+from urllib.parse import quote
+
+# import del_file
 
 app = Flask(__name__)
 
@@ -27,29 +29,9 @@ if DEBUG_MODE:
     app.debug = True
 
 
-def delFile():
-    # Xóa toàn bộ nội dung trong thư mục uploads
-    for file_name in os.listdir(UPLOAD_FOLDER):
-        file_path = os.path.join(UPLOAD_FOLDER, file_name)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print("Failed to delete", file_path, ":", e)
-
-    # Xóa toàn bộ nội dung trong thư mục output
-    for file_name in os.listdir(OUTPUT_FOLDER):
-        file_path = os.path.join(OUTPUT_FOLDER, file_name)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print("Failed to delete", file_path, ":", e)
-
-
 @app.route("/")
 def index():
-    delFile()
+    # del_file.delFile(UPLOAD_FOLDER, OUTPUT_FOLDER)
     return render_template("index.html")
 
 
@@ -58,14 +40,14 @@ def video():
     return render_template("video_process.html")
 
 
-@app.route("/image")
-def image():
-    return render_template("image_process.html")
-
-
 @app.route("/process-video", methods=["POST"])
 def process_video_route():
     return process_video(request)
+
+
+@app.route("/image")
+def image():
+    return render_template("image_process.html")
 
 
 @app.route("/process-image", methods=["POST"])
