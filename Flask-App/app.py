@@ -1,8 +1,36 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
+# flask --app app.py --debug run
+# pip install google-api-python-client
+
+from flask import Flask, render_template, request, send_file, redirect, url_for # type: ignore
 from video_process import process_video
 from image_process import process_images
+from PIL import Image
 import os
-import shutil
+
+from googleapiclient.discovery import build # type: ignore
+from google.oauth2 import service_account # type: ignore
+
+SCOPES = ['https://www.googleapis.com/auth/drive']
+SERVICE_ACCOUNT_FILE = 'nine-sauce-e6063c4e3b75-key.json'
+PARENT_FOLDER_ID = '1rbHxpiz1fle1mPd7rr5J1ndRYQlHhYst'
+
+def authenticate():
+    creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes = SCOPES)
+    return creds
+
+def upload_photo(file_path):
+    creds = authenticate()
+    service = build('drive', 'v3', credentials=creds)
+
+    file_metadata = {
+        'name': "Pic-local",
+        'parents': [PARENT_FOLDER_ID]
+    }
+
+    file = service.files().create(
+        body = file_metadata,
+        media_body=file_path
+    ).execute()
 
 app = Flask(__name__)
 
@@ -12,7 +40,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-OUTPUT_FOLDER = "output"
+OUTPUT_FOLDER = "static"
 app.config["OUTPUT_FOLDER"] = OUTPUT_FOLDER
 
 if not os.path.exists(OUTPUT_FOLDER):
@@ -68,34 +96,26 @@ def process_video_route():
     return process_video(request)
 
 
-@app.route("/process-image", methods=["POST"])
+@app.route("/process-image", methods=["GET","POST"])
 def process_image_route():
-    # Lấy các file ảnh từ request
-    image_files = request.files.getlist("picture")
-    # Lấy link từ input text
+    # Get image files and link from the request
+    image_files = [Image.open(file) for file in request.files.getlist("picture")]
     link = request.form.get("image_link")
-    # Thư mục đầu ra
-    output_dir = OUTPUT_FOLDER
-    # Gọi hàm xử lý ảnh
-    output_path = process_images(image_files, link, output_dir)
-    # Chuyển hướng đến trang download
-    return redirect(url_for("download", filename=output_path))
+
+    # Process images and get the in-memory output
+    output_buffer = process_images(image_files, link)
+
+    # Upload the processed image to Google Drive
+    upload_photo(output_buffer)
+
+    # Redirect to the download page
+    return redirect(url_for("download"))
 
 
-@app.route("/download/<filename>")
-def download(filename):
-    return render_template("download.html", filename=filename)
 
-
-# Add a new route for downloading the video or image file directly
-@app.route("/download-file/<filename>")
-def download_file(filename):
-    try:
-        return send_file(filename, as_attachment=True)
-    except Exception as e:
-        # Xử lý ngoại lệ nếu có
-        print("An error occurred:", e)
-
+@app.route("/download")
+def download():
+    return render_template("download.html")
 
 if __name__ == "__main__":
     # Chỉ cần chạy ở chế độ debug nếu ở môi trường development

@@ -1,6 +1,8 @@
 import qrcode
+from io import BytesIO
 from PIL import Image
 import os
+import tempfile
 
 
 # Hàm để cắt hình ảnh thành hình vuông từ trung tâm
@@ -14,8 +16,7 @@ def crop_to_square(image):
     return image.crop((left, top, right, bottom))
 
 
-# Hàm để tạo mã QR từ đường link và lưu ảnh mã QR
-def generate_qr_code(link, output_path):
+def generate_qr_code(link):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -26,13 +27,35 @@ def generate_qr_code(link, output_path):
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="black", back_color="white")
-    img.save(output_path)
+    # Save the QR code to an in-memory buffer
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer
 
 
-# Hàm để merge ảnh và lưu lại
-def merge_images(image_files, qr_code_path, output_path):
-    # Đọc ảnh từ danh sách các file ảnh và resize
-    images = [Image.open(image_file) for image_file in image_files]
+from PIL import Image
+from io import BytesIO
+
+def merge_images(image_files, qr_code_buffer):
+    # Create temporary files to store the images
+    temp_files = []
+    for image in image_files:
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        temp_files.append(temp_file)
+        
+        # Convert the image to RGB mode if it's not already
+        if image.mode != "RGB":
+            image = image.convert("RGB")
+        
+        # Save the image to the temporary file
+        image.save(temp_file, format="JPEG")
+
+    # Open temporary files as file-like objects
+    image_data = [open(temp_file.name, "rb") for temp_file in temp_files]
+
+    # Read the image data and create Image objects
+    images = [Image.open(data) for data in image_data]
 
     # Sử dụng hàm crop_to_square để cắt hình vuông từ trung tâm của mỗi ảnh
     cropped_images = [crop_to_square(image) for image in images]
@@ -40,8 +63,8 @@ def merge_images(image_files, qr_code_path, output_path):
     target_size = (1024, 1024)
     resized_images = [image.resize(target_size) for image in cropped_images]
 
-    # Đọc ảnh QR code từ đường dẫn và resize
-    qr_code_image = Image.open(qr_code_path)
+    # Đọc ảnh QR code từ buffer và resize
+    qr_code_image = Image.open(BytesIO(qr_code_buffer.read()))
     resized_qr_code = qr_code_image.resize(target_size)
 
     # Merge ảnh và ảnh QR code
@@ -72,21 +95,28 @@ def merge_images(image_files, qr_code_path, output_path):
             result_image.paste(resized_images[image_index], position[i])
             image_index += 1
 
-    result_image.save(output_path)
+    # Save the result image to an in-memory buffer
+    output_buffer = BytesIO()
+    result_image.save(output_buffer, format="JPEG")
+    output_buffer.seek(0)
+
+    # Close and remove temporary files
+    for temp_file in temp_files:
+        temp_file.close()
+        os.unlink(temp_file.name)
+
+    # Return the result image
+    return result_image
 
 
-# Hàm xử lý các ảnh và tạo ảnh kết quả
-def process_images(image_files, link, output_dir):
-    # Tạo thư mục nếu chưa tồn tại
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+def process_images(image_files, link):
+    # Create a directory for in-memory output
+    output_dir = BytesIO()
 
-    # Tạo và lưu ảnh mã QR
-    qr_code_path = os.path.join(output_dir, "qr_code.png")
-    generate_qr_code(link, qr_code_path)
+    # Generate QR code and get the in-memory buffer
+    qr_code_buffer = generate_qr_code(link)
 
-    # Tạo và lưu ảnh kết quả
-    output_path = os.path.join(output_dir, "result.jpg")
-    merge_images(image_files, qr_code_path, output_path)
+    # Merge images and save the result to the in-memory buffer
+    merge_images(image_files, qr_code_buffer)
 
-    return output_path
+    return output_dir
