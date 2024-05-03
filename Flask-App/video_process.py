@@ -1,47 +1,55 @@
 from flask import request # type: ignore
 from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
 import os
-import app
+import qrcode # type: ignore
+from io import BytesIO
+import numpy as np # type: ignore
+from PIL import Image # type: ignore
 
 UPLOAD_FOLDER = "uploads"
+OUTPUT_FOLDER = "output"
 
 def process_video(request):
-    # Get uploaded files
+    # Get uploaded video file and link from the request
     video_file = request.files.get('video')
-    image_file = request.files.get('image')
+    link = request.form.get('link')
 
-    # Check if video and image files are present
+    # Check if video file and link are provided
     if not video_file:
         return "No video file uploaded"
-    if not image_file:
-        return "No image file uploaded"
+    if not link:
+        return "No link provided"
 
-    # Save uploaded files to the upload folder
-    video_path = os.path.join(app.app.config['UPLOAD_FOLDER'], video_file.filename)
+    # Save the uploaded video file
+    video_path = os.path.join(UPLOAD_FOLDER, video_file.filename)
     video_file.save(video_path)
 
-    image_path = os.path.join(app.app.config['UPLOAD_FOLDER'], image_file.filename)
-    image_file.save(image_path)
+    try:
+        # Load the input video
+        input_clip = VideoFileClip(video_path)
+    except Exception as e:
+        return f"Error loading video clip: {e}"
 
-    # Load the input video
-    input_clip = VideoFileClip(video_path)
+    # Generate colored QR code image from the provided link
+    background_color = (255, 255, 255)  # White
+    fill_color = (0, 0, 255)  # Blue
+    qr_image_bytes = generate_colored_qr_code(link, background=background_color, fill_color=fill_color)
 
-    # Merge video with image
-    final_clip = merge_video_with_image(input_clip, image_path)
+    # Merge video with QR code image
+    final_clip = merge_video_with_qr_code(input_clip, qr_image_bytes)
 
     # Write the final video clip to a file
-    output_path = os.path.join(app.app.config['OUTPUT_FOLDER'], 'output.mp4')
+    output_path = os.path.join(OUTPUT_FOLDER, 'output.mp4')
     final_clip.write_videofile(output_path, fps=input_clip.fps)
 
-    # Remove the uploaded files after processing
+    # Remove the uploaded video file after processing
     os.remove(video_path)
-    os.remove(image_path)
 
     output_filename = 'output.mp4'
 
     return output_filename
 
-def merge_video_with_image(video_clip, image_path):
+def merge_video_with_qr_code(video_clip, qr_image_bytes):
     try:
         # Get the duration of the video clip
         duration = video_clip.duration
@@ -72,8 +80,14 @@ def merge_video_with_image(video_clip, image_path):
     while len(part_clips) < rows * cols:
         part_clips.append(None)
 
-    # Load the input image
-    image_clip = ImageClip(image_path, duration = part_duration)
+    # Load the QR code image using PIL
+    qr_image = Image.open(qr_image_bytes)
+
+    # Convert the PIL image to a numpy array
+    qr_image_np = np.array(qr_image)
+
+    # Create an ImageClip object from the numpy array
+    image_clip = ImageClip(qr_image_np, duration=part_duration)
 
     # Calculate the dimensions of the empty space
     empty_width = image_clip.size[0] * cols
@@ -83,7 +97,7 @@ def merge_video_with_image(video_clip, image_path):
     x_offset = (empty_width - image_clip.w) // 2
     y_offset = (empty_height - image_clip.h) // 2
 
-    # Place the image in the middle of the empty space
+    # Place the QR code image in the middle of the empty space
     image_position = (x_offset, y_offset)
     image_clip = image_clip.set_position(image_position)
 
@@ -96,3 +110,20 @@ def merge_video_with_image(video_clip, image_path):
     final_clip = clips_array([[part_clips.pop(0) for _ in range(cols)] for _ in range(rows)])
 
     return final_clip
+
+def generate_colored_qr_code(link, background=(255, 255, 255), fill_color=(0, 0, 0)):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(link)
+    qr.make(fit=True)
+
+    qr_img = qr.make_image(fill_color=fill_color, back_color=background)
+    qr_bytes = BytesIO()
+    qr_img.save(qr_bytes, format='PNG')
+    qr_bytes.seek(0)
+
+    return qr_bytes
