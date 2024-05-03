@@ -1,17 +1,37 @@
 from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
+from PIL import Image # type: ignore
+import qrcode # type: ignore
+from io import BytesIO
+import numpy as np # type: ignore
 
+# Function to generate QR code image from a link with custom colors
+def generate_colored_qr_code(link, background=(255, 255, 255), fill_color=(0, 0, 0)):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(link)
+    qr.make(fit=True)
+
+    qr_img = qr.make_image(fill_color=fill_color, back_color=background)
+    qr_bytes = BytesIO()
+    qr_img.save(qr_bytes, format='PNG')
+    qr_bytes.seek(0)
+
+    return qr_bytes
 
 input_video_path = "./sauce/input-vid.mp4"
-
-image_path = "./sauce/1.PNG"
-
-print('=====================input_video_path')
-print(input_video_path)
-print('=====================image_path')
-print(image_path)
+link = "https://www.example.com"  # Replace with your link
 
 # Load the input video
 input_clip = VideoFileClip(input_video_path)
+
+# Generate colored QR code image from the link
+background_color = (255, 255, 255)  # White
+fill_color = (0, 0, 255)  # Blue
+qr_image_bytes = generate_colored_qr_code(link, background=background_color, fill_color=fill_color)
 
 # Calculate the duration of each part
 num_parts = 8
@@ -38,7 +58,15 @@ while len(part_clips) < rows * cols:
     part_clips.append(None)
 
 empty_duration = part_duration
-image_clip = ImageClip(image_path, duration=empty_duration)
+
+# Load the QR code image using PIL
+qr_image = Image.open(qr_image_bytes)
+
+# Convert the PIL image to a numpy array
+qr_image_np = np.array(qr_image)
+
+# Create an ImageClip object from the numpy array
+image_clip = ImageClip(qr_image_np, duration=part_duration)
 
 # Calculate the dimensions of the empty space
 empty_width = image_clip.size[0] * cols
@@ -48,7 +76,7 @@ empty_height = image_clip.size[1] * rows
 x_offset = (empty_width - image_clip.w) // 2
 y_offset = (empty_height - image_clip.h) // 2
 
-# Place the image in the middle of the empty space
+# Place the QR code image in the middle of the empty space
 image_position = (x_offset, y_offset)
 image_clip = image_clip.set_position(image_position)
 
