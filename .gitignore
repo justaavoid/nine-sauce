@@ -1,0 +1,25 @@
+# Ignore Python bytecode files
+*.pyc
+__pycache__/
+
+# Ignore Python virtual environments
+venv/
+env/
+
+# Ignore IDE and editor specific files
+.idea/
+.vscode/
+*.code-workspace
+
+# Ignore .mp4 files
+*.mp4
+
+# Ignore image files (common extensions)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+
+
+**/Resources/

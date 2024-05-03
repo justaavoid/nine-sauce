@@ -4,16 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Process</title>
+    <link rel="stylesheet" href="../static/process.css" />
   </head>
   <body>
-    <h1>Image Processing Page</h1>
+    <h1 style="text-transform: uppercase">Image Processing Page</h1>
     <form
       action="/process-image"
       method="post"
       enctype="multipart/form-data"
       onsubmit="return validateForm()"
     >
-      <label for="picture">Select Picture File:</label>
+      <hr />
+      <label for="picture">Select picture</label>
       <input
         type="file"
         id="picture"
@@ -21,11 +23,20 @@
         accept="image/*"
         multiple
       />
-      <br /><br />
-      <label for="image_link">Image Link:</label>
-      <input type="text" id="image_link" name="image_link" />
-      <br /><br />
-      <button type="submit">Process Image</button>
+      <hr />
+      <label for="image_link">QR</label>
+      <textarea
+        class="qr"
+        type="text"
+        id="image_link"
+        name="image_link"
+        rows="5"
+      ></textarea>
+      <hr />
+      <div class="buttons">
+        <button class="btn" type="submit">Run</button>
+        <a href="/" class="btn">home</a>
+      </div>
     </form>
     <script>
       function validateForm() {

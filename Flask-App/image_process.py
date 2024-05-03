@@ -1,5 +1,5 @@
-import qrcode
-from PIL import Image
+import qrcode # type: ignore
+from PIL import Image # type: ignore
 import os
 
 

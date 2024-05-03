@@ -1,8 +1,14 @@
-from moviepy.editor import VideoFileClip, clips_array, ImageClip
-import numpy as np
+from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
 
-# Replace 'input_video_path' with the path to your input video
-input_video_path = r'C:\Users\dvtung\Documents\hello-world\Proj\VideoMaker\create-vid\output.mp4'
+
+input_video_path = "./sauce/input-vid.mp4"
+
+image_path = "./sauce/1.PNG"
+
+print('=====================input_video_path')
+print(input_video_path)
+print('=====================image_path')
+print(image_path)
 
 # Load the input video
 input_clip = VideoFileClip(input_video_path)
@@ -31,8 +37,6 @@ cols = 3
 while len(part_clips) < rows * cols:
     part_clips.append(None)
 
-# Replace None values with an ImageClip
-image_path = r'C:\Users\dvtung\Documents\hello-world\Proj\VideoMaker\create-vid\sauce\1.PNG'
 empty_duration = part_duration
 image_clip = ImageClip(image_path, duration=empty_duration)
 

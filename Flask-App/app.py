@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for
+from flask import Flask, render_template, request, send_file, redirect, url_for # type: ignore
 from video_process import process_video
 from image_process import process_images
 import os
-from urllib.parse import quote
-
+import video_process
 # import del_file
 
 app = Flask(__name__)
@@ -42,7 +41,10 @@ def video():
 
 @app.route("/process-video", methods=["POST"])
 def process_video_route():
-    return process_video(request)
+    output_filename = video_process.process_video(request)
+    processed_video_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+    # Redirect to the download page with the filename as a parameter
+    return redirect(url_for("download", filename=processed_video_path))
 
 
 @app.route("/image")

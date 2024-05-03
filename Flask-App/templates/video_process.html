@@ -3,18 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Video Process</title>
+    <title>Upload Files</title>
+    <link rel="stylesheet" href="../static/process.css" />
   </head>
   <body>
-    <h1>Video Processing Page</h1>
-    <form action="/process" method="post" enctype="multipart/form-data">
-      <label for="video">Select Video File:</label>
-      <input type="file" id="video" name="video" accept="video/*" />
-      <br /><br />
-      <label for="picture">Select Picture File:</label>
-      <input type="file" id="picture" name="picture" accept="image/*" />
-      <br /><br />
-      <button type="submit">Process Video</button>
+    <h1 style="text-transform: uppercase">Video Processing page</h1>
+    <form action="/process-video" method="post" enctype="multipart/form-data">
+      <label for="video">Select a video</label>
+      <input type="file" name="video" accept="video/*" required /><br /><br />
+      <label for="image">Select an image</label>
+      <input type="file" name="image" accept="image/*" required /><br /><br />
+      <div class="buttons">
+        <button class="btn" type="submit">Run</button>
+        <a href="/" class="btn">home</a>
+      </div>
     </form>
   </body>
 </html>
