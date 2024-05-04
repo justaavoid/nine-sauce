@@ -40,27 +40,6 @@
 #     delete_all_videos_in_root()
 
 
-# def delete_file_in_folder(UPLOAD_FOLDER, OUTPUT_FOLDER):
-
-#     # Xóa toàn bộ nội dung trong thư mục uploads
-#     for file_name in os.listdir(UPLOAD_FOLDER):
-#         file_path = os.path.join(UPLOAD_FOLDER, file_name)
-#         try:
-#             if os.path.isfile(file_path):
-#                 os.unlink(file_path)
-#         except Exception as e:
-#             print("Failed to delete", file_path, ":", e)
-
-#     # Xóa toàn bộ nội dung trong thư mục output
-#     for file_name in os.listdir(OUTPUT_FOLDER):
-#         file_path = os.path.join(OUTPUT_FOLDER, file_name)
-#         try:
-#             if os.path.isfile(file_path):
-#                 os.unlink(file_path)
-#         except Exception as e:
-#             print("Failed to delete", file_path, ":", e)
-
-
 # def delFile(UPLOAD_FOLDER, OUTPUT_FOLDER):
 #     delete_file_in_root()
 #     delete_file_in_folder(UPLOAD_FOLDER, OUTPUT_FOLDER)

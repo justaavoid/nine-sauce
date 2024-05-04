@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, send_file, redirect, url_for # type: ignore
+from flask import Flask, render_template, request, send_file, redirect, url_for  # type: ignore
 from video_process import process_video
 from image_process import process_images
 import os
 import video_process
+
 # import del_file
 
 app = Flask(__name__)
@@ -28,8 +29,30 @@ if DEBUG_MODE:
     app.debug = True
 
 
+def delete_file_in_folder(UPLOAD_FOLDER, OUTPUT_FOLDER):
+
+    # Xóa toàn bộ nội dung trong thư mục uploads
+    for file_name in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, file_name)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print("Failed to delete", file_path, ":", e)
+
+    # Xóa toàn bộ nội dung trong thư mục output
+    for file_name in os.listdir(OUTPUT_FOLDER):
+        file_path = os.path.join(OUTPUT_FOLDER, file_name)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print("Failed to delete", file_path, ":", e)
+
+
 @app.route("/")
 def index():
+    delete_file_in_folder(UPLOAD_FOLDER=UPLOAD_FOLDER, OUTPUT_FOLDER=OUTPUT_FOLDER)
     # del_file.delFile(UPLOAD_FOLDER, OUTPUT_FOLDER)
     return render_template("index.html")
 
@@ -42,7 +65,7 @@ def video():
 @app.route("/process-video", methods=["POST"])
 def process_video_route():
     output_filename = video_process.process_video(request)
-    processed_video_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+    processed_video_path = os.path.join(app.config["OUTPUT_FOLDER"], output_filename)
     # Redirect to the download page with the filename as a parameter
     return redirect(url_for("download", filename=processed_video_path))
 

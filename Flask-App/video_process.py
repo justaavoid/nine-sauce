@@ -1,18 +1,19 @@
-from flask import request # type: ignore
-from moviepy.editor import VideoFileClip, clips_array, ImageClip # type: ignore
+from flask import request  # type: ignore
+from moviepy.editor import VideoFileClip, clips_array, ImageClip  # type: ignore
 import os
-import qrcode # type: ignore
+import qrcode  # type: ignore
 from io import BytesIO
-import numpy as np # type: ignore
-from PIL import Image # type: ignore
+import numpy as np  # type: ignore
+from PIL import Image  # type: ignore
 
 UPLOAD_FOLDER = "uploads"
 OUTPUT_FOLDER = "output"
 
+
 def process_video(request):
     # Get uploaded video file and link from the request
-    video_file = request.files.get('video')
-    link = request.form.get('link')
+    video_file = request.files.get("video")
+    link = request.form.get("link")
 
     # Check if video file and link are provided
     if not video_file:
@@ -33,21 +34,24 @@ def process_video(request):
     # Generate colored QR code image from the provided link
     background_color = (255, 255, 255)  # White
     fill_color = (0, 0, 255)  # Blue
-    qr_image_bytes = generate_colored_qr_code(link, background=background_color, fill_color=fill_color)
+    qr_image_bytes = generate_colored_qr_code(
+        link, background=background_color, fill_color=fill_color
+    )
 
     # Merge video with QR code image
     final_clip = merge_video_with_qr_code(input_clip, qr_image_bytes)
 
     # Write the final video clip to a file
-    output_path = os.path.join(OUTPUT_FOLDER, 'output.mp4')
+    output_path = os.path.join(OUTPUT_FOLDER, "output.mp4")
     final_clip.write_videofile(output_path, fps=input_clip.fps)
 
     # Remove the uploaded video file after processing
-    os.remove(video_path)
+    # os.remove(video_path)
 
-    output_filename = 'output.mp4'
+    output_filename = "output.mp4"
 
     return output_filename
+
 
 def merge_video_with_qr_code(video_clip, qr_image_bytes):
     try:
@@ -107,9 +111,12 @@ def merge_video_with_qr_code(video_clip, qr_image_bytes):
             part_clips[i] = image_clip
 
     # Create a single video where each part appears in its own designated space
-    final_clip = clips_array([[part_clips.pop(0) for _ in range(cols)] for _ in range(rows)])
+    final_clip = clips_array(
+        [[part_clips.pop(0) for _ in range(cols)] for _ in range(rows)]
+    )
 
     return final_clip
+
 
 def generate_colored_qr_code(link, background=(255, 255, 255), fill_color=(0, 0, 0)):
     qr = qrcode.QRCode(
@@ -123,7 +130,7 @@ def generate_colored_qr_code(link, background=(255, 255, 255), fill_color=(0, 0,
 
     qr_img = qr.make_image(fill_color=fill_color, back_color=background)
     qr_bytes = BytesIO()
-    qr_img.save(qr_bytes, format='PNG')
+    qr_img.save(qr_bytes, format="PNG")
     qr_bytes.seek(0)
 
     return qr_bytes
