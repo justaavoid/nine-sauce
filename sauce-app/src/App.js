@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import ReactLoading from "react-loading";
 import DataFetching from "./FetchData/fetch-data";
 import LinkOrButton from "./LinkButton/LinkOrButton";
@@ -59,13 +59,13 @@ function App() {
     }
   };
 
-  // Function to handle revealing an image
   const revealImage = (rowIndex) => {
-    // Check if image at rowIndex is already revealed
-    if (!revealedImages.includes(rowIndex)) {
-      // Add the rowIndex to revealedImages state
-      setRevealedImages([...revealedImages, rowIndex]);
-    }
+    setRevealedImages((prevRevealedImages) => {
+      if (!prevRevealedImages.includes(rowIndex)) {
+        return [...prevRevealedImages, rowIndex];
+      }
+      return prevRevealedImages;
+    });
   };
 
   useEffect(() => {
@@ -88,6 +88,7 @@ function App() {
         setRows={setRows}
         setLoading={setLoading}
         updateRemainTime={updateRemainTime}
+        revealImage={revealImage}
       />
       <h2 className="table-header">HAVE A NICE TIME</h2>
       {loading ? (
@@ -111,6 +112,7 @@ function App() {
                       rowIndex={rowIndex}
                       revealImage={revealImage}
                       codetimeData={rowData[2]}
+                      isSensitive={rowData[3]}
                     />
                   )}
                   {cellIndex === 1 && (

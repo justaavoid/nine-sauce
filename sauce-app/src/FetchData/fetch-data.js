@@ -5,6 +5,7 @@ const DataFetching = ({
   setRows,
   setLoading,
   updateRemainTime,
+  revealImage,
 }) => {
   useEffect(() => {
     async function fetchData() {
@@ -27,6 +28,13 @@ const DataFetching = ({
         rows.shift();
 
         setRows(rows);
+
+        // eslint-disable-next-line array-callback-return
+        rows.map((rowData, index) => {
+          if (rowData[3].startsWith("0")) {
+            revealImage(index);
+          }
+        });
         setLoading(false);
       } else {
         console.log("dev");
@@ -45,14 +53,19 @@ const DataFetching = ({
 
         // Remove the first column from all rows
         rows.shift();
-        console.log(rows);
-
         setRows(rows);
+        // eslint-disable-next-line array-callback-return
+        rows.map((rowData, index) => {
+          if (rowData[3].startsWith("0")) {
+            revealImage(index);
+          }
+        });
         setLoading(false);
       }
     }
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isProduction, setRows, setLoading]);
 
   return null;

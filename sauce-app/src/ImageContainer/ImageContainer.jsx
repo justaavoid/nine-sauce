@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useState } from "react";
 import "./BlurLayer.css";
 import BlurLayerButton from "./BlurLayerButton";
