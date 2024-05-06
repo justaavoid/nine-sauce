@@ -28,7 +28,7 @@
   --border_radius3: 40px 40px 40px 40px / 48px 48px 30px 30px;
 }
 .button {
-  transform: scale(0.8);
+  transform: scale(0.5);
   position: relative;
   display: flex;
   justify-content: center;
@@ -42,6 +42,13 @@
   background: var(--main_color);
   font-family: "Fredoka One", cursive;
 }
+
+@media screen and (max-width: 767px) {
+  .button {
+    transform: scale(0.35); /* Decrease width by 50% on smaller screens */
+  }
+}
+
 .button::before {
   content: "";
   position: absolute;

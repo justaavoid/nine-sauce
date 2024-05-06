@@ -16,45 +16,25 @@ body {
   margin-top: 40px;
   width: 100%;
   list-style: none;
-  li {
-    border-radius: 3px;
-    padding: 10px 10px;
-    margin-bottom: 25px;
+  display: grid; /* Set the display property to grid */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Create columns with a minimum width of 300px and grow to fill the available space */
+  gap: 20px; /* Add some space between grid items */
+}
 
-    /* display: flex; */
-  }
+.table-row {
+  background-color: white;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+  padding: 10px;
+}
 
-  .table-row {
-    background-color: white;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
-  }
-  .col:nth-child(odd) {
-    color: rgb(0, 55, 158);
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    border-bottom: 1px solid lightgray;
-  }
-
-  @media all and (max-width: 767px) {
-    li {
-      display: flex;
-      flex-direction: column;
-    }
-    .col {
-      text-align: left;
-      flex-basis: 100%;
-    }
-    .col {
-      display: flex;
-      padding: 10px 0;
-      &:before {
-        color: #6c7a89;
-        content: attr(data-label);
-        text-align: left;
-      }
-    }
-  }
+.col:nth-child(odd) {
+  color: rgb(0, 55, 158);
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 1px solid lightgray;
 }
 
 .loading {
