@@ -14,12 +14,13 @@ def process_video(request):
     # Get uploaded video file and link from the request
     video_file = request.files.get("video")
     link = request.form.get("link")
+    image = request.files.get("image_file")
 
     # Check if video file and link are provided
     if not video_file:
         return "No video file uploaded"
-    if not link:
-        return "No link provided"
+    if not link and not image:
+        return "No link or image provided"
 
     # Save the uploaded video file
     video_path = os.path.join(UPLOAD_FOLDER, video_file.filename)
@@ -30,23 +31,27 @@ def process_video(request):
         input_clip = VideoFileClip(video_path)
     except Exception as e:
         return f"Error loading video clip: {e}"
-
-    # Generate colored QR code image from the provided link
-    background_color = (255, 255, 255)  # White
-    fill_color = (0, 0, 255)  # Blue
-    qr_image_bytes = generate_colored_qr_code(
-        link, background=background_color, fill_color=fill_color
-    )
+    image_qr= image
+    if image:
+        image_path = os.path.join(OUTPUT_FOLDER, "user_image.png")
+        image.save(image_path)
+        image_qr= image_path
+    elif link:
+        # Generate colored QR code image from the provided link
+        background_color = (255, 255, 255)  # White
+        fill_color = (0, 0, 255)  # Blue
+        qr_image_bytes = generate_colored_qr_code(
+            link, background=background_color, fill_color=fill_color
+        )
+        image_qr= qr_image_bytes
+    
 
     # Merge video with QR code image
-    final_clip = merge_video_with_qr_code(input_clip, qr_image_bytes)
+    final_clip = merge_video_with_qr_code(input_clip, image_qr)
 
     # Write the final video clip to a file
     output_path = os.path.join(OUTPUT_FOLDER, "output.mp4")
     final_clip.write_videofile(output_path, fps=input_clip.fps)
-
-    # Remove the uploaded video file after processing
-    # os.remove(video_path)
 
     output_filename = "output.mp4"
 

@@ -27,7 +27,6 @@ label {
 }
 
 input[type="file"] {
-  margin-bottom: 15px;
   width: calc(100% - 20px);
   padding: 10px;
   border: none;
@@ -124,4 +123,32 @@ input[type="file"]::placeholder {
 .btn:active {
   box-shadow: inset 0 0 0 100vmax var(--_c);
   color: #fff;
+}
+
+/* css for button clear all chosen file */
+.file-container {
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+
+.clear-file {
+  margin-left: 10px;
+  background-color: transparent; /* Transparent background */
+  border: none; /* Remove border */
+  color: #555; /* Text color */
+  cursor: pointer; /* Cursor style */
+}
+
+.clear-file:hover {
+  color: #f00; /* Change text color on hover */
+}
+
+/* css for error msg */
+.error-msg {
+  color: red;
+  font-size: 10px;
+}
+
+.section {
+  margin: 15px;
 }

@@ -8,25 +8,93 @@
   </head>
   <body>
     <h1 style="text-transform: uppercase">Video Processing Page</h1>
-    <form action="/process-video" method="post" enctype="multipart/form-data">
+    <form
+      action="/process-video"
+      method="post"
+      enctype="multipart/form-data"
+      onsubmit="return validateForm()"
+    >
       <hr />
-      <label for="video">Select a video</label>
-      <input type="file" name="video" accept="video/*" required />
+      <div>
+        <label for="video">Select a video file</label>
+        <div class="file-container">
+          <input
+            id="video-file"
+            type="file"
+            name="video"
+            accept="video/*"
+            required
+          />
+          <!-- Add a button to clear the selected file -->
+          <button
+            class="clear-file"
+            type="button"
+            onclick="clearFile('video-file')"
+          >
+            &#10060;
+          </button>
+        </div>
+        <span class="error-msg" id="error-video"></span>
+      </div>
+      <div class="section"></div>
       <hr />
-      <label for="link">QR code generation</label>
-      <textarea
-        class="qr"
-        type="url"
-        id="image_link"
-        name="link"
-        rows="5"
-        required
-      ></textarea>
+      <div>
+        <label for="link">QR code generation or choose a picture</label>
+        <textarea
+          class="qr"
+          type="url"
+          id="image_link"
+          name="link"
+          rows="5"
+        ></textarea>
+        <br />
+        <div class="file-container">
+          <input
+            type="file"
+            id="image_file"
+            name="image_file"
+            accept="image/*"
+          />
+          <!-- Add a button to clear the selected file -->
+          <button
+            class="clear-file"
+            type="button"
+            onclick="clearFile('image_file')"
+          >
+            &#10060;
+          </button>
+        </div>
+        <span class="error-msg" id="error-qr-img"></span>
+      </div>
+      <div class="section"></div>
       <hr />
       <div class="buttons">
         <button class="btn" type="submit">Run</button>
         <a href="/" class="btn">Home</a>
       </div>
     </form>
+    <script>
+      // Function to clear the selected file
+      function clearFile(elmId) {
+        // Get the file input element
+        var fileInput = document.getElementById(elmId);
+        // Reset the value of the file input
+        fileInput.value = "";
+      }
+
+      function validateForm() {
+        var imageLink = document.getElementById("image_link").value;
+        var imageFile = document.getElementById("image_file").value;
+        var errorMsg = document.getElementById("error-qr-img");
+
+        if (imageLink.trim() === "" && imageFile.trim() === "") {
+          errorMsg.innerText = "Please provide One image or QR-link.";
+          return false;
+        } else {
+          errorMsg.innerText = "";
+        }
+        return true;
+      }
+    </script>
   </body>
 </html>

@@ -64,7 +64,7 @@ def video():
 
 @app.route("/process-video", methods=["POST"])
 def process_video_route():
-    output_filename = video_process.process_video(request)
+    output_filename = process_video(request)
     processed_video_path = os.path.join(app.config["OUTPUT_FOLDER"], output_filename)
     # Redirect to the download page with the filename as a parameter
     return redirect(url_for("download", filename=processed_video_path))
@@ -81,10 +81,11 @@ def process_image_route():
     image_files = request.files.getlist("picture")
     # Lấy link từ input text
     link = request.form.get("image_link")
+    image = request.files.get("image_file")
     # Thư mục đầu ra
     output_dir = OUTPUT_FOLDER
     # Gọi hàm xử lý ảnh
-    output_path = process_images(image_files, link, output_dir)
+    output_path = process_images(image_files, link, output_dir, image)
     # Chuyển hướng đến trang download
     return redirect(url_for("download", filename=output_path))
 

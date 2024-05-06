@@ -28,9 +28,7 @@ def generate_qr_code(link, output_path):
     img = qr.make_image(fill_color="black", back_color="white")
     img.save(output_path)
 
-
-# Hàm để merge ảnh và lưu lại
-def merge_images(image_files, qr_code_path, output_path):
+def merge_images(image_files, image_path, output_path):
     # Đọc ảnh từ danh sách các file ảnh và resize
     images = [Image.open(image_file) for image_file in image_files]
 
@@ -41,7 +39,7 @@ def merge_images(image_files, qr_code_path, output_path):
     resized_images = [image.resize(target_size) for image in cropped_images]
 
     # Đọc ảnh QR code từ đường dẫn và resize
-    qr_code_image = Image.open(qr_code_path)
+    qr_code_image = Image.open(image_path)
     resized_qr_code = qr_code_image.resize(target_size)
 
     # Merge ảnh và ảnh QR code
@@ -76,17 +74,25 @@ def merge_images(image_files, qr_code_path, output_path):
 
 
 # Hàm xử lý các ảnh và tạo ảnh kết quả
-def process_images(image_files, link, output_dir):
+def process_images(image_files, link, output_dir, image):
     # Tạo thư mục nếu chưa tồn tại
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Tạo và lưu ảnh mã QR
-    qr_code_path = os.path.join(output_dir, "qr_code.png")
-    generate_qr_code(link, qr_code_path)
+    # Tạo và lưu ảnh mã QR nếu có link và không có image
+    if link and not image:
+        qr_code_path = os.path.join(output_dir, "qr_code.png")
+        generate_qr_code(link, qr_code_path)
+        image_path = qr_code_path
+    # Nếu có image, lưu image và sử dụng image cho quá trình merge
+    elif image:
+        image_path = os.path.join(output_dir, "user_image.png")
+        image.save(image_path)
+    else:
+        return None
 
     # Tạo và lưu ảnh kết quả
     output_path = os.path.join(output_dir, "result.jpg")
-    merge_images(image_files, qr_code_path, output_path)
+    merge_images(image_files, image_path, output_path)
 
     return output_path
