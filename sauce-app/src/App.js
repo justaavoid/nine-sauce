@@ -5,6 +5,7 @@ import ReactLoading from "react-loading";
 import DataFetching from "./FetchData/fetch-data";
 import LinkOrButton from "./LinkButton/LinkOrButton";
 import ImageContainer from "./ImageContainer/ImageContainer";
+import UploadForm from "./UploadsData/uploads-data";
 
 function App() {
   const [remainTime, setRemainTime] = useState(0);
@@ -83,6 +84,7 @@ function App() {
 
   return (
     <>
+      <UploadForm />
       <DataFetching
         isProduction={isProduction}
         setRows={setRows}
