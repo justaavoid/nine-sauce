@@ -5,7 +5,6 @@ import ReactLoading from "react-loading";
 import DataFetching from "./FetchData/fetch-data";
 import LinkOrButton from "./LinkButton/LinkOrButton";
 import ImageContainer from "./ImageContainer/ImageContainer";
-import UploadForm from "./UploadsData/uploads-data";
 
 function App() {
   const [remainTime, setRemainTime] = useState(0);
@@ -84,7 +83,7 @@ function App() {
 
   return (
     <>
-      <UploadForm />
+      {/* <UploadForm /> */}
       <DataFetching
         isProduction={isProduction}
         setRows={setRows}
@@ -98,40 +97,30 @@ function App() {
           <ReactLoading type="bars" color="#000" />
         </div>
       ) : (
-        <ul className="responsive-table">
+        <div class="container">
           {rows.map((rowData, rowIndex) => (
-            <li key={rowIndex} className="table-row">
-              {rowData.map((cellData, cellIndex) => (
-                <div
-                  key={cellIndex}
-                  className="col"
-                  id={`tableline${rowIndex}-${cellIndex}`}
-                >
-                  {cellIndex === 0 && (
-                    <ImageContainer
-                      cellData={cellData}
-                      revealedImages={revealedImages}
-                      rowIndex={rowIndex}
-                      revealImage={revealImage}
-                      codetimeData={rowData[2]}
-                      isSensitive={rowData[3]}
-                    />
-                  )}
-                  {cellIndex === 1 && (
-                    <LinkOrButton
-                      cellData={cellData}
-                      rowIndex={rowIndex}
-                      handleClick={handleClick}
-                      countDown={countDown}
-                      remainingTime={remainingTime}
-                      clickedRowIndex={clickedRowIndex}
-                    />
-                  )}
-                </div>
-              ))}
-            </li>
+            <>
+              {console.log(rowData[2])}
+              <div key={rowIndex} class="card">
+                <ImageContainer
+                  cellData={rowData[0]}
+                  revealedImages={revealedImages}
+                  rowIndex={rowIndex}
+                  isSensitive={rowData[3]}
+                />
+                <LinkOrButton
+                  cellData={rowData[1]}
+                  rowIndex={rowIndex}
+                  handleClick={handleClick}
+                  countDown={countDown}
+                  remainingTime={remainingTime}
+                  clickedRowIndex={clickedRowIndex}
+                  idData={rowData[2]}
+                />
+              </div>
+            </>
           ))}
-        </ul>
+        </div>
       )}
     </>
   );
