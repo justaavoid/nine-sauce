@@ -98,7 +98,6 @@
   position: relative;
   width: 150px;
   height: 150px;
-  background: #fff;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -114,7 +113,7 @@
   height: 100%;
   border-radius: 10px;
   overflow: hidden;
-  transform: translateY(15px) scale(0.89);
+  transform: scale(1);
   transform-origin: top;
 }
 
