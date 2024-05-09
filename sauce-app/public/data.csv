@@ -1,6 +1,6 @@
-time,3,time to minutes
-https://res.cloudinary.com/info-vibes/image/upload/v1715219644/sauce-app-image/lj4qom57jopsngb5gs3t.png,sample.com,123,0,30
-https://res.cloudinary.com/info-vibes/image/upload/v1715222588/sauce-app-image/kqurksmn0ydc5376dkr6.png,url-2,222,0
-https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg,url-3,333,0
-https://res.cloudinary.com/info-vibes/image/upload/v1714976813/1.jpg,url-4,444,0
-https://res.cloudinary.com/info-vibes/image/upload/v1714976813/1.jpg,url-5,555,0
+img-url,info-url,code-name,is-sen,wait-time
+https://res.cloudinary.com/info-vibes/image/upload/v1715219644/sauce-app-image/lj4qom57jopsngb5gs3t.png,sample.com,123,0,10
+https://res.cloudinary.com/info-vibes/image/upload/v1715222588/sauce-app-image/kqurksmn0ydc5376dkr6.png,url-2,222,0,5
+https://res.cloudinary.com/info-vibes/image/upload/v1714976813/1.jpg,url-3,333,0,3
+https://res.cloudinary.com/info-vibes/image/upload/v1714976813/1.jpg,url-4,444,0,2
+https://res.cloudinary.com/info-vibes/image/upload/v1714976813/1.jpg,url-5,555,0,4

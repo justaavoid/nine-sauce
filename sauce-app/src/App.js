@@ -7,7 +7,7 @@ import LinkOrButton from "./LinkButton/LinkOrButton";
 import ImageContainer from "./ImageContainer/ImageContainer";
 
 function App() {
-  const [remainTime, setRemainTime] = useState(0);
+  const [, setRemainTime] = useState(0);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const isProduction = process.env.NODE_ENV === "production";
@@ -19,10 +19,11 @@ function App() {
   const [revealedImages, setRevealedImages] = useState([]);
 
   // Function to handle click on link cell
-  function handleClick(rowIndex) {
+  function handleClick(rowIndex, remainTime) {
     setClickedRowIndex(rowIndex);
     setRemainingTime(remainTime);
     setCountDown(true);
+    updateRemainTime(remainTime);
   }
 
   // Function to update remainTime
@@ -83,12 +84,10 @@ function App() {
 
   return (
     <>
-      {/* <UploadForm /> */}
       <DataFetching
         isProduction={isProduction}
         setRows={setRows}
         setLoading={setLoading}
-        updateRemainTime={updateRemainTime}
         revealImage={revealImage}
       />
       <h2 className="table-header">HAVE A NICE TIME</h2>
@@ -116,6 +115,7 @@ function App() {
                   remainingTime={remainingTime}
                   clickedRowIndex={clickedRowIndex}
                   idData={rowData[2]}
+                  totalRemainTime={rowData[4]}
                 />
               </div>
             </>

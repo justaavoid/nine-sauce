@@ -1,30 +1,19 @@
 import { useEffect } from "react";
 
-const DataFetching = ({
-  isProduction,
-  setRows,
-  setLoading,
-  updateRemainTime,
-  revealImage,
-}) => {
+const DataFetching = ({ isProduction, setRows, setLoading, revealImage }) => {
   useEffect(() => {
     async function fetchData() {
       let data;
       if (isProduction) {
         console.log("production");
+        // twi - img - sauce
         const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/11REayKptZ5q_nts321cm6xUHhJWpGRvd1KpmrMGvf9Q/export?format=csv"
+          "https://docs.google.com/spreadsheets/d/1ZWeBW3g3iavrO5632YwJZNSwV4C-j0sGIZrSBmYvZMs/export?format=csv"
         );
         data = await response.text();
         const rows = data.split("\n").map((row) => row.split(","));
 
-        // Extract and parse the countdown time from the first column of the first row
-        const remainTime = parseInt(rows[0][1]);
-        if (!isNaN(remainTime)) {
-          updateRemainTime(remainTime);
-        }
-
-        // Remove the first column from all rows
+        // Remove the first rows
         rows.shift();
 
         setRows(rows);
@@ -45,13 +34,7 @@ const DataFetching = ({
         // Parse CSV data into rows and columns
         const rows = csvData.split("\n").map((row) => row.split(","));
 
-        // Extract and parse the countdown time from the first column of the first row
-        const remainTime = parseInt(rows[0][1]);
-        if (!isNaN(remainTime)) {
-          updateRemainTime(remainTime);
-        }
-
-        // Remove the first column from all rows
+        // Remove the first row
         rows.shift();
         setRows(rows);
         // eslint-disable-next-line array-callback-return

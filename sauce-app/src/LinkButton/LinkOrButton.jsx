@@ -10,6 +10,7 @@ const LinkOrButton = ({
   remainingTime,
   clickedRowIndex,
   idData,
+  totalRemainTime,
 }) => {
   if (
     countDown &&
@@ -39,7 +40,7 @@ const LinkOrButton = ({
         <div class="detail">
           <ul class="sci">
             <li>
-              <button onClick={() => handleClick(rowIndex)}>
+              <button onClick={() => handleClick(rowIndex, totalRemainTime)}>
                 <i class="fas fa-link">{idData}</i>
               </button>
             </li>
