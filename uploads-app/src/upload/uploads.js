@@ -7,6 +7,7 @@ function UploadForm() {
     image_link: "",
     idName: "",
     isSensitive: false,
+    waitTime: 5,
   });
 
   const handleSubmit = async (event) => {
@@ -18,12 +19,7 @@ function UploadForm() {
     const image_link = formData.get("image_link");
     const idName = formData.get("idName");
     const isSensitive = formData.get("isSensitive") === "on";
-
-    // Now you have the form data, you can do whatever you want with it
-    console.log("Picture:", picture);
-    console.log("Image Link:", image_link);
-    console.log("ID:", idName);
-    console.log("IsSensitive:", isSensitive);
+    const waitTime = formData.get("waitTime");
 
     // You can also update state if needed
     setFormData({
@@ -32,10 +28,8 @@ function UploadForm() {
       image_link,
       idName,
       isSensitive,
+      waitTime,
     });
-
-    // await url = uploadImageToCloudinary(picture)
-    // await updateGoogleSheetWithUrls(url,image_link,idName,isSensitive?1:0)
 
     try {
       // Upload image to Cloudinary
@@ -43,11 +37,12 @@ function UploadForm() {
       const cloudinaryImageUrl = cloudinaryResponse.secure_url;
 
       // Update Google Sheet with Cloudinary image URL and form data
-      await updateGoogleSheetWithUrls(
+      await addRowToGoogleSheet(
         cloudinaryImageUrl,
         image_link,
         idName,
-        isSensitive ? 1 : 0
+        isSensitive ? 1 : 0,
+        waitTime
       );
 
       // Show success notification
@@ -114,32 +109,48 @@ function UploadForm() {
     }
   };
 
-  const updateGoogleSheetWithUrls = async (
+  const addRowToGoogleSheet = async (
     cloudinaryImageUrl,
     imageUrl,
     idName,
-    isSen
+    isSen,
+    waitTime
   ) => {
     try {
-      //update data to ggsheet
-      const formData = new FormData();
-      formData.append("cloudinaryImageUrl", cloudinaryImageUrl);
-      formData.append("imageUrl", imageUrl);
-      formData.append("idName", idName);
-      formData.append("isSen", isSen);
-      // https://script.google.com/macros/s/AKfycbxkxQb47JO6_M4fnIPHuGqCEErDuvzderwa6Hxf6It7JIoNZenNHJq6bEKWOfOjGAzFvw/exec
+      // Construct the URL for adding a new row to SheetDB
+      const sheetDbUrl = "https://sheetdb.io/api/v1/jk4d8jbl4buc1";
 
-      await fetch(
-        "https://script.google.com/macros/s/AKfycbxkxQb47JO6_M4fnIPHuGqCEErDuvzderwa6Hxf6It7JIoNZenNHJq6bEKWOfOjGAzFvw/exec",
+      // Construct the headers with Bearer token for authentication
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer k8dxrk9ucybgoygst69n3t6vwm1eqbq9uodc9zmd",
+      };
+
+      const data = [
         {
-          method: "POST",
-          body: formData,
-        }
-      );
+          "img-url": cloudinaryImageUrl,
+          "info-url": imageUrl,
+          "code-name": idName,
+          "is-sen": isSen,
+          "wait-time": waitTime,
+        },
+      ];
 
-      console.log("Google Sheets updated successfully:");
+      // Send a POST request to add the new row with the data and authentication
+      const response = await fetch(sheetDbUrl, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(data),
+      });
+
+      // Check if the request was successful
+      if (response.ok) {
+        console.log("New row added successfully to SheetDB");
+      } else {
+        throw new Error("Failed to add new row to SheetDB");
+      }
     } catch (error) {
-      console.error("Error updating Google Sheets:", error);
+      console.error("Error adding new row to SheetDB:", error);
       throw error;
     }
   };
@@ -147,12 +158,7 @@ function UploadForm() {
   return (
     <div>
       <h1>Image Uploads Cloudinary</h1>
-      <form
-        action="/process-image"
-        method="post"
-        encType="multipart/form-data"
-        onSubmit={handleSubmit}
-      >
+      <form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
         <hr />
         <div>
           <label htmlFor="picture">Select picture</label>
@@ -203,6 +209,11 @@ function UploadForm() {
         <div className="isSensitive">
           <label htmlFor="isSensitive">isSen</label>
           <input name="isSensitive" type="checkbox" />
+        </div>
+        <hr />
+        <div className="wait-time">
+          <label htmlFor="waitTime">Wait time</label>
+          <input name="waitTime" type="number" />
         </div>
         <hr />
         <div className="buttons">
