@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import "./uploads.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Result from "../result/container";
 
 function UploadForm() {
-  const [formData, setFormData] = useState({
+  const [latestUpload, setLatestUpload] = useState({
+    imageLink: "",
+    cloudinaryImageUrl: "",
+  });
+  const [isUploadSuccess, setIsUploadSuccess] = useState(false);
+  const [, setFormData] = useState({
     picture: "",
     image_link: "",
     idName: "",
@@ -44,20 +52,16 @@ function UploadForm() {
         isSensitive ? 1 : 0,
         waitTime
       );
-
-      // Show success notification
-      const errorMsg = document.getElementById("error-mul-image");
-      errorMsg.innerText =
-        "Image uploaded successfully with URL: " + cloudinaryImageUrl;
-      errorMsg.style.color = "green";
+      setLatestUpload({
+        imageLink: image_link,
+        cloudinaryImageUrl: cloudinaryResponse.secure_url,
+      });
+      setIsUploadSuccess(true);
 
       // Optionally, you can reset the form after submission
       form.reset();
     } catch (error) {
-      // Show error notification
-      const errorMsg = document.getElementById("error-mul-image");
-      errorMsg.innerText = "Failed to upload image or update Google Sheet";
-      errorMsg.style.color = "red";
+      toast.error("Failed to upload data");
       console.error("Error:", error);
     }
   };
@@ -86,13 +90,9 @@ function UploadForm() {
 
       if (response.ok) {
         const cloudinaryResponse = await response.json();
-        const cloudinaryImageUrl = cloudinaryResponse.secure_url;
 
         // Show notification
-        const errorMsg = document.getElementById("error-mul-image");
-        errorMsg.innerText =
-          "Image uploaded successfully with url \n " + cloudinaryImageUrl;
-        errorMsg.style.color = "green";
+        toast.success("Cloudinary successfully");
 
         // Return Cloudinary response
         return cloudinaryResponse;
@@ -102,9 +102,7 @@ function UploadForm() {
     } catch (error) {
       console.error("Error uploading image to Cloudinary:", error);
       // Show error notification
-      const errorMsg = document.getElementById("error-mul-image");
-      errorMsg.innerText = "Failed to upload image to Cloudinary";
-      errorMsg.style.color = "red";
+      toast.error("Cloudinary failed");
       throw error;
     }
   };
@@ -145,20 +143,22 @@ function UploadForm() {
 
       // Check if the request was successful
       if (response.ok) {
-        console.log("New row added successfully to SheetDB");
+        toast.success("Data adding successfully");
       } else {
-        throw new Error("Failed to add new row to SheetDB");
+        toast.error("Failed to add new data");
+        throw new Error("Failed to add new data");
       }
     } catch (error) {
-      console.error("Error adding new row to SheetDB:", error);
+      console.error("Error adding new data:", error);
       throw error;
     }
   };
 
   return (
-    <div>
-      <h1>Image Uploads Cloudinary</h1>
+    <div className="container">
+      <ToastContainer />
       <form method="post" encType="multipart/form-data" onSubmit={handleSubmit}>
+        <h1>Image Uploads Cloudinary</h1>
         <hr />
         <div>
           <label htmlFor="picture">Select picture</label>
@@ -180,7 +180,6 @@ function UploadForm() {
               &#10060;
             </button>
           </div>
-          <span className="error-msg" id="error-mul-image"></span>
         </div>
 
         <div className="section"></div>
@@ -192,28 +191,31 @@ function UploadForm() {
             id="image_link"
             name="image_link"
             placeholder="Enter search link"
-            rows="5"
+            rows="3"
             onChange={handleInputChange}
-            value={formData.image_link}
           ></textarea>
           <br />
-          <span className="error-msg" id="error-qr-img"></span>
         </div>
         <div className="section"></div>
         <hr />
-        <div className="idNum">
+        <div className="idNum one-line">
           <label htmlFor="idName">ID</label>
           <input name="idName" type="text" />
         </div>
         <hr />
-        <div className="isSensitive">
+        <div className="isSensitive one-line">
           <label htmlFor="isSensitive">isSen</label>
           <input name="isSensitive" type="checkbox" />
         </div>
         <hr />
-        <div className="wait-time">
+        <div className="wait-time one-line">
           <label htmlFor="waitTime">Wait time</label>
-          <input name="waitTime" type="number" />
+          <input
+            className="waitTime"
+            name="waitTime"
+            type="number"
+            defaultValue={5}
+          />
         </div>
         <hr />
         <div className="buttons">
@@ -225,6 +227,12 @@ function UploadForm() {
           </a>
         </div>
       </form>
+      {isUploadSuccess && (
+        <Result
+          imageLink={latestUpload.imageLink}
+          cloudinaryImageUrl={latestUpload.cloudinaryImageUrl}
+        />
+      )}
     </div>
   );
 }

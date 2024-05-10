@@ -1,4 +1,3 @@
-import "./App.css";
 import UploadForm from "./upload/uploads";
 
 function App() {

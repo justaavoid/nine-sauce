@@ -4,26 +4,40 @@ body {
   margin: 0;
   padding: 0;
 }
+* {
+  font-size: 20px;
+}
 
 h1 {
   color: #333;
   text-align: center;
-  margin-top: 20px;
+  margin: 0px;
 }
 
 form {
   margin: 20px auto;
   max-width: 400px;
   background-color: #fff;
-  padding: 30px;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (max-width: 600px) {
+  form {
+    /* font-size: 30px !important; */
+    max-width: 100%;
+  }
 }
 
 label {
   display: block;
   margin-bottom: 10px;
   color: #555;
+}
+
+input[type="text"] {
+  width: calc(100% - 10px);
 }
 
 input[type="file"] {
@@ -146,9 +160,33 @@ input[type="file"]::placeholder {
 /* css for error msg */
 .error-msg {
   color: red;
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .section {
   margin: 15px;
+}
+
+.one-line {
+  align-items: center;
+  display: grid;
+  grid-template-columns: auto auto;
+  padding: 10px 0px;
+}
+.one-line > label {
+  margin: 0;
+  margin-right: 20px;
+}
+.one-line > input {
+  padding: 5px;
+  font-size: 20px;
+}
+
+.waitTime {
+  width: 50%;
+  text-align: center;
+}
+
+input[type="checkbox"] {
+  transform: scale(2);
 }

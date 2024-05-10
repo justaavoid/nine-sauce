@@ -29,7 +29,12 @@ const LinkOrButton = ({
   } else if (clickedRowIndex === rowIndex && remainingTime === 0) {
     return (
       <div className="show-link">
-        <a href={cellData} target="_blank" rel="noopener noreferrer">
+        <a
+          href={cellData}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ overflow: "hidden", wordBreak: "break-all" }}
+        >
           {cellData}
         </a>
       </div>
