@@ -5,12 +5,12 @@ import ReactLoading from "react-loading";
 import DataFetching from "./FetchData/fetch-data";
 import LinkOrButton from "./LinkButton/LinkOrButton";
 import ImageContainer from "./ImageContainer/ImageContainer";
+import { Tabs, Tab } from "@mui/material";
 
 function App() {
   const [, setRemainTime] = useState(0);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const isProduction = process.env.NODE_ENV === "production";
   const [clickedRowIndex, setClickedRowIndex] = useState(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [countDown, setCountDown] = useState(true);
@@ -82,48 +82,199 @@ function App() {
     }
   }, [remainingTime]);
 
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setSelectedTab(newValue);
+    setClickedRowIndex(null);
+  };
+
   return (
     <>
-      <DataFetching
-        isProduction={isProduction}
-        setRows={setRows}
-        setLoading={setLoading}
-        revealImage={revealImage}
-      />
-      <h2 className="table-header">HAVE A NICE TIME</h2>
-      {loading ? (
-        <div className="loading-icon">
-          <ReactLoading type="bars" color="#000" />
-        </div>
-      ) : (
-        <div class="container">
-          {rows.map((rowData, rowIndex) => (
-            <>
-              {console.log(rowData[2])}
-              <div key={rowIndex} class="card">
-                <ImageContainer
-                  cellData={rowData[0]}
-                  revealedImages={revealedImages}
-                  rowIndex={rowIndex}
-                  isSensitive={rowData[3]}
-                />
-                <LinkOrButton
-                  cellData={rowData[1]}
-                  rowIndex={rowIndex}
-                  handleClick={handleClick}
-                  countDown={countDown}
-                  remainingTime={remainingTime}
-                  clickedRowIndex={clickedRowIndex}
-                  idData={rowData[2]}
-                  totalRemainTime={rowData[4]}
-                />
-              </div>
-            </>
-          ))}
-        </div>
-      )}
+      <div>
+        <Tabs
+          value={selectedTab}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+          centered
+          scrollButtons="auto"
+        >
+          <Tab label="Twitter" />
+          <Tab label="Facebook" />
+          <Tab label="Instagram" />
+          <Tab label="Youtube" />
+        </Tabs>
+        <TabPanel value={selectedTab} index={0}>
+          <DataFetching
+            setRows={setRows}
+            setLoading={setLoading}
+            revealImage={revealImage}
+            sheetName={"twi"}
+          />
+          <h2 className="table-header">Twitter</h2>
+          {loading ? (
+            <div className="loading-icon">
+              <ReactLoading type="bars" color="#000" />
+            </div>
+          ) : (
+            <div class="container">
+              {rows.map((rowData, rowIndex) => (
+                <>
+                  {console.log(rowData[2])}
+                  <div key={rowIndex} class="card">
+                    <ImageContainer
+                      cellData={rowData[0]}
+                      revealedImages={revealedImages}
+                      rowIndex={rowIndex}
+                      isSensitive={rowData[3]}
+                    />
+                    <LinkOrButton
+                      cellData={rowData[1]}
+                      rowIndex={rowIndex}
+                      handleClick={handleClick}
+                      countDown={countDown}
+                      remainingTime={remainingTime}
+                      clickedRowIndex={clickedRowIndex}
+                      idData={rowData[2]}
+                      totalRemainTime={rowData[4]}
+                    />
+                  </div>
+                </>
+              ))}
+            </div>
+          )}
+        </TabPanel>
+        <TabPanel value={selectedTab} index={1}>
+          <DataFetching
+            setRows={setRows}
+            setLoading={setLoading}
+            revealImage={revealImage}
+            sheetName={"si"}
+          />
+          <h2 className="table-header">Si</h2>
+          {loading ? (
+            <div className="loading-icon">
+              <ReactLoading type="bars" color="#000" />
+            </div>
+          ) : (
+            <div class="container">
+              {rows.map((rowData, rowIndex) => (
+                <>
+                  {console.log(rowData[2])}
+                  <div key={rowIndex} class="card">
+                    <ImageContainer
+                      cellData={rowData[0]}
+                      revealedImages={revealedImages}
+                      rowIndex={rowIndex}
+                      isSensitive={rowData[3]}
+                    />
+                    <LinkOrButton
+                      cellData={rowData[1]}
+                      rowIndex={rowIndex}
+                      handleClick={handleClick}
+                      countDown={countDown}
+                      remainingTime={remainingTime}
+                      clickedRowIndex={clickedRowIndex}
+                      idData={rowData[2]}
+                      totalRemainTime={rowData[4]}
+                    />
+                  </div>
+                </>
+              ))}
+            </div>
+          )}
+        </TabPanel>
+        <TabPanel value={selectedTab} index={2}>
+          <DataFetching
+            setRows={setRows}
+            setLoading={setLoading}
+            revealImage={revealImage}
+            sheetName={"two"}
+          />
+          <h2 className="table-header">Two</h2>
+          {loading ? (
+            <div className="loading-icon">
+              <ReactLoading type="bars" color="#000" />
+            </div>
+          ) : (
+            <div class="container">
+              {rows.map((rowData, rowIndex) => (
+                <>
+                  {console.log(rowData[2])}
+                  <div key={rowIndex} class="card">
+                    <ImageContainer
+                      cellData={rowData[0]}
+                      revealedImages={revealedImages}
+                      rowIndex={rowIndex}
+                      isSensitive={rowData[3]}
+                    />
+                    <LinkOrButton
+                      cellData={rowData[1]}
+                      rowIndex={rowIndex}
+                      handleClick={handleClick}
+                      countDown={countDown}
+                      remainingTime={remainingTime}
+                      clickedRowIndex={clickedRowIndex}
+                      idData={rowData[2]}
+                      totalRemainTime={rowData[4]}
+                    />
+                  </div>
+                </>
+              ))}
+            </div>
+          )}
+        </TabPanel>
+        <TabPanel value={selectedTab} index={3}>
+          <DataFetching
+            setRows={setRows}
+            setLoading={setLoading}
+            revealImage={revealImage}
+            sheetName={"cos"}
+          />
+          <h2 className="table-header">Cos</h2>
+          {loading ? (
+            <div className="loading-icon">
+              <ReactLoading type="bars" color="#000" />
+            </div>
+          ) : (
+            <div class="container">
+              {rows.map((rowData, rowIndex) => (
+                <>
+                  {console.log(rowData[2])}
+                  <div key={rowIndex} class="card">
+                    <ImageContainer
+                      cellData={rowData[0]}
+                      revealedImages={revealedImages}
+                      rowIndex={rowIndex}
+                      isSensitive={rowData[3]}
+                    />
+                    <LinkOrButton
+                      cellData={rowData[1]}
+                      rowIndex={rowIndex}
+                      handleClick={handleClick}
+                      countDown={countDown}
+                      remainingTime={remainingTime}
+                      clickedRowIndex={clickedRowIndex}
+                      idData={rowData[2]}
+                      totalRemainTime={rowData[4]}
+                    />
+                  </div>
+                </>
+              ))}
+            </div>
+          )}
+        </TabPanel>
+      </div>
     </>
   );
 }
+
+const TabPanel = ({ children, value, index }) => {
+  return (
+    <div role="tabpanel" hidden={value !== index}>
+      {value === index && <>{children}</>}
+    </div>
+  );
+};
 
 export default App;

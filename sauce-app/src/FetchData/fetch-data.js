@@ -1,16 +1,19 @@
 import { useEffect } from "react";
 
-const DataFetching = ({ isProduction, setRows, setLoading, revealImage }) => {
+const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
   useEffect(() => {
     async function fetchData() {
       let data;
-      if (isProduction) {
+      if (process.env.NODE_ENV === "production") {
         console.log("production");
-        // twi - img - sauce
+        // twi - img - sauce :  1ZWeBW3g3iavrO5632YwJZNSwV4C-j0sGIZrSBmYvZMs
+        // all-img-src:         1DYk_PEW173PdaMNmzjJ6z0vzwFZsdBJfs2T5p9srqPk
         const response = await fetch(
-          "https://docs.google.com/spreadsheets/d/1ZWeBW3g3iavrO5632YwJZNSwV4C-j0sGIZrSBmYvZMs/export?format=csv"
+          `https://docs.google.com/spreadsheets/d/1DYk_PEW173PdaMNmzjJ6z0vzwFZsdBJfs2T5p9srqPk/gviz/tq?tqx=out:csv&sheet=${sheetName}`
         );
+        // Convert response to text
         data = await response.text();
+        data = data.replace(/"/g, "");
         const rows = data.split("\n").map((row) => row.split(","));
 
         // Remove the first rows
@@ -49,7 +52,7 @@ const DataFetching = ({ isProduction, setRows, setLoading, revealImage }) => {
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isProduction, setRows, setLoading]);
+  }, [setRows, setLoading]);
 
   return null;
 };
