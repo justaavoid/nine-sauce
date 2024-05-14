@@ -91,18 +91,22 @@ function App() {
   return (
     <>
       <div>
-        <Tabs
-          value={selectedTab}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-          centered
-          scrollButtons="auto"
-        >
-          <Tab label="Twitter" />
-          <Tab label="Facebook" />
-          <Tab label="Instagram" />
-          <Tab label="Youtube" />
-        </Tabs>
+        <div style={{ padding: "0 20px" }}>
+          <Tabs
+            variant="scrollable"
+            scrollButtons
+            allowScrollButtonsMobile
+            value={selectedTab}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+            centered
+          >
+            <Tab label="Twitter" />
+            <Tab label="Facebook" />
+            <Tab label="Instagram" />
+            <Tab label="Youtube" />
+          </Tabs>
+        </div>
         <TabPanel value={selectedTab} index={0}>
           <DataFetching
             setRows={setRows}

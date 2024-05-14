@@ -38,7 +38,7 @@ const TabContent = ({
   const showItemsLength = [5, 10, 20, 50, 100];
 
   return (
-    <>
+    <div style={{ padding: "0 20px" }}>
       <h2 className="table-header">{tabName}</h2>
       <br />
       <hr />
@@ -51,7 +51,7 @@ const TabContent = ({
         direction="row"
         alignItems={"center"}
       >
-        <FormControl variant="standard" sx={{ m: 1 }}>
+        <FormControl variant="standard" sx={{ m: 1, minWidth: "30px" }}>
           <InputLabel>Rows</InputLabel>
           <Select
             value={rowsPerPage}
@@ -66,8 +66,7 @@ const TabContent = ({
           </Select>
         </FormControl>
         <Pagination
-          siblingCount={0}
-          boundaryCount={2}
+          boundaryCount={1}
           showFirstButton
           showLastButton
           count={Math.ceil(rows.length / rowsPerPage)}
@@ -122,7 +121,7 @@ const TabContent = ({
           onChange={handleChangePage}
           color="secondary"
         />
-        <FormControl variant="standard" sx={{ m: 1 }}>
+        <FormControl variant="standard" sx={{ m: 1, minWidth: "30px" }}>
           <InputLabel>Rows</InputLabel>
           <Select
             value={rowsPerPage}
@@ -140,7 +139,7 @@ const TabContent = ({
       <br />
       <hr />
       <br />
-    </>
+    </div>
   );
 };
 
