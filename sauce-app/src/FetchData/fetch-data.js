@@ -5,7 +5,6 @@ const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
     async function fetchData() {
       let data;
       if (process.env.NODE_ENV === "production") {
-        console.log("production");
         // twi - img - sauce :  1ZWeBW3g3iavrO5632YwJZNSwV4C-j0sGIZrSBmYvZMs
         // all-img-src:         1DYk_PEW173PdaMNmzjJ6z0vzwFZsdBJfs2T5p9srqPk
         const response = await fetch(
@@ -19,6 +18,11 @@ const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
         // Remove the first rows
         rows.shift();
 
+        rows.sort((a, b) => {
+          // Assuming row[2] contains strings
+          return -a[2].localeCompare(b[2]);
+        });
+
         setRows(rows);
 
         // eslint-disable-next-line array-callback-return
@@ -29,7 +33,6 @@ const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
         });
         setLoading(false);
       } else {
-        console.log("dev");
         // Fetch data from local CSV file in development mode
         const response = await fetch("data.csv");
         const csvData = await response.text(); // Get CSV data as text
@@ -39,6 +42,12 @@ const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
 
         // Remove the first row
         rows.shift();
+
+        rows.sort((a, b) => {
+          // Assuming row[2] contains strings
+          return -a[2].localeCompare(b[2]);
+        });
+
         setRows(rows);
         // eslint-disable-next-line array-callback-return
         rows.map((rowData, index) => {

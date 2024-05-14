@@ -41,12 +41,12 @@ const LinkOrButton = ({
     );
   } else {
     return (
-      <div class="content">
-        <div class="detail">
-          <ul class="sci">
+      <div className="content">
+        <div className="detail">
+          <ul className="sci">
             <li>
               <button onClick={() => handleClick(rowIndex, totalRemainTime)}>
-                <i class="fas fa-link">{idData}</i>
+                <i className="fas fa-link">{idData}</i>
               </button>
             </li>
           </ul>
