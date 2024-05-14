@@ -16,6 +16,7 @@ function UploadForm() {
     idName: "",
     isSensitive: false,
     waitTime: 5,
+    tabName: "",
   });
 
   const handleSubmit = async (event) => {
@@ -28,6 +29,7 @@ function UploadForm() {
     const idName = formData.get("idName");
     const isSensitive = formData.get("isSensitive") === "on";
     const waitTime = formData.get("waitTime");
+    const tabName = formData.get("tabName");
 
     // You can also update state if needed
     setFormData({
@@ -37,6 +39,7 @@ function UploadForm() {
       idName,
       isSensitive,
       waitTime,
+      tabName,
     });
 
     try {
@@ -50,7 +53,8 @@ function UploadForm() {
         image_link,
         idName,
         isSensitive ? 1 : 0,
-        waitTime
+        waitTime,
+        tabName
       );
       setLatestUpload({
         imageLink: image_link,
@@ -107,21 +111,31 @@ function UploadForm() {
     }
   };
 
+  const formatImageUrl = (imgUrl) => {
+    if (!imgUrl.startsWith("https://")) {
+      imgUrl = "https://www.google.com/search?q=" + imgUrl;
+    }
+    return imgUrl;
+  };
+
   const addRowToGoogleSheet = async (
     cloudinaryImageUrl,
     imageUrl,
     idName,
     isSen,
-    waitTime
+    waitTime,
+    tabName
   ) => {
     try {
+      const sheetName = tabName !== "" ? tabName : "twi";
+      imageUrl = formatImageUrl(imageUrl);
       // Construct the URL for adding a new row to SheetDB
-      const sheetDbUrl = "https://sheetdb.io/api/v1/jk4d8jbl4buc1";
+      const sheetDbUrl = `https://sheetdb.io/api/v1/0qivd7rw00pqd?sheet=${sheetName}`;
 
       // Construct the headers with Bearer token for authentication
       const headers = {
         "Content-Type": "application/json",
-        Authorization: "Bearer k8dxrk9ucybgoygst69n3t6vwm1eqbq9uodc9zmd",
+        Authorization: "Bearer auezwno7zbg9cxuceefbpzz6wa5b7czsmfb0egyu",
       };
 
       const data = [
@@ -216,6 +230,16 @@ function UploadForm() {
             type="number"
             defaultValue={5}
           />
+        </div>
+        <hr />
+        <div className="tab-name one-line">
+          <label htmlFor="tabName">Tab name</label>
+          <select name="tabName" id="tabName">
+            <option value="twi">twitter</option>
+            <option value="si">se x/JAV</option>
+            <option value="two">hen tai</option>
+            <option value="cos">cosplay</option>
+          </select>
         </div>
         <hr />
         <div className="buttons">
