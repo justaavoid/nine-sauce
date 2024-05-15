@@ -3,8 +3,10 @@ import "./uploads.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Result from "../result/container";
+import ReactLoading from "react-loading";
 
 function UploadForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const [latestUpload, setLatestUpload] = useState({
     imageLink: "",
     cloudinaryImageUrl: "",
@@ -21,6 +23,7 @@ function UploadForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     const form = event.target;
     const formData = new FormData(form);
 
@@ -67,6 +70,8 @@ function UploadForm() {
     } catch (error) {
       toast.error("Failed to upload data");
       console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -242,14 +247,19 @@ function UploadForm() {
           </select>
         </div>
         <hr />
-        <div className="buttons">
-          <button className="btn" type="submit">
-            Uploads
-          </button>
-          <a href="/" className="btn">
-            Home
-          </a>
-        </div>
+        {isLoading ? (
+          <ReactLoading type="spin" color="#fff" height={24} width={24} />
+        ) : (
+          <div className="buttons">
+            <button className="btn" type="submit">
+              Upload
+            </button>
+
+            <a href="/" className="btn">
+              Home
+            </a>
+          </div>
+        )}
       </form>
       {isUploadSuccess && (
         <Result
