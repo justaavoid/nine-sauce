@@ -40,6 +40,7 @@ const TabContent = ({
   return (
     <div style={{ padding: "0 20px" }}>
       <h2 className="table-header">{tabName}</h2>
+      <p style={{ width: "100%", textAlign: "center" }}>Total: {rows.length}</p>
       <br />
       <hr />
       <br />
@@ -51,7 +52,7 @@ const TabContent = ({
         direction="row"
         alignItems={"center"}
       >
-        <FormControl variant="standard" sx={{ m: 1, minWidth: "30px" }}>
+        <FormControl variant="standard" sx={{ m: 1, minWidth: "80px" }}>
           <InputLabel>Rows</InputLabel>
           <Select
             value={rowsPerPage}

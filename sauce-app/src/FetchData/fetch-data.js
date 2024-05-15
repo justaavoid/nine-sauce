@@ -1,6 +1,17 @@
 import { useEffect } from "react";
 
 const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
+  const sortDataByDate = (data) => {
+    return data
+      .map((row) => {
+        const dateStr = row[5]; // date-create column
+        const [day, month, year] = dateStr.split("/").map(Number);
+        return { row, dateObj: new Date(year, month - 1, day) };
+      })
+      .sort((a, b) => b.dateObj - a.dateObj)
+      .map((item) => item.row);
+  };
+
   useEffect(() => {
     async function fetchData() {
       let data;
@@ -19,8 +30,8 @@ const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
         rows.shift();
 
         rows.sort((a, b) => {
-          // Assuming row[2] contains strings
-          return -a[2].localeCompare(b[2]);
+          // Assuming row[5] contains strings
+          return -a[5].localeCompare(b[5]);
         });
 
         setRows(rows);
@@ -43,14 +54,11 @@ const DataFetching = ({ setRows, setLoading, revealImage, sheetName }) => {
         // Remove the first row
         rows.shift();
 
-        rows.sort((a, b) => {
-          // Assuming row[2] contains strings
-          return -a[2].localeCompare(b[2]);
-        });
+        const sortedRows = await sortDataByDate(rows);
 
-        setRows(rows);
+        setRows(sortedRows);
         // eslint-disable-next-line array-callback-return
-        rows.map((rowData, index) => {
+        sortedRows.map((rowData, index) => {
           if (rowData[3].startsWith("0")) {
             revealImage(index);
           }
