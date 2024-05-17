@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extract Image Processing</title>
+    <link rel="stylesheet" href="../static/process.css" />
+  </head>
+  <body>
+    <h1 style="text-transform: uppercase">Extract Image Processing Page</h1>
+    <form
+      action="/extract-image-process"
+      method="post"
+      enctype="multipart/form-data"
+      onsubmit="return validateForm()"
+    >
+      <hr />
+      <div>
+        <label for="video">Select a video file</label>
+        <div class="file-container">
+          <input
+            id="video-file"
+            type="file"
+            name="video"
+            accept="video/*"
+            required
+          />
+          <!-- Add a button to clear the selected file -->
+          <button
+            class="clear-file"
+            type="button"
+            onclick="clearFile('video-file')"
+          >
+            &#10060;
+          </button>
+        </div>
+      </div>
+      <div class="section"></div>
+      <hr />
+      <div class="section"></div>
+      <hr />
+      <div class="buttons">
+        <button class="btn" type="submit">Run</button>
+        <a href="/" class="btn">Home</a>
+      </div>
+    </form>
+    <script>
+      // Function to clear the selected file
+      function clearFile(elmId) {
+        // Get the file input element
+        var fileInput = document.getElementById(elmId);
+        // Reset the value of the file input
+        fileInput.value = "";
+      }
+    </script>
+  </body>
+</html>

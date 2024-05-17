@@ -1,8 +1,10 @@
+# flask --app app.py --debug run
+
 from flask import Flask, render_template, request, send_file, redirect, url_for  # type: ignore
 from video_process import process_video
 from image_process import process_images
 import os
-import video_process
+from extract_image import process_extract_image
 
 # import del_file
 
@@ -89,6 +91,24 @@ def process_image_route():
     # Chuyển hướng đến trang download
     return redirect(url_for("download", filename=output_path))
 
+
+@app.route("/extract-image")
+def extract_image():
+    return render_template("extract_image.html")
+
+@app.route("/extract-image-process", methods=["POST"])
+def process_extract_image_route():
+
+    img_io = process_extract_image(request)
+    if isinstance(img_io, tuple):
+        return img_io  # This handles error messages from process_extract_image
+
+    # Save the BytesIO image to a file if necessary
+    output_path = os.path.join(app.config['OUTPUT_FOLDER'], 'merged_image.jpg')
+    with open(output_path, 'wb') as f:
+        f.write(img_io.getbuffer())
+
+    return redirect(url_for("download", filename=output_path))
 
 @app.route("/download/<filename>")
 def download(filename):
